@@ -1,6 +1,6 @@
 FROM node:alpine
 
-WORKDIR /React
+WORKDIR /Allocation_react
 COPY package.json .
 Run npm install -g npm@8.15.0
 Run set NODE_OPTIONS=--max_old_space_size=4096
