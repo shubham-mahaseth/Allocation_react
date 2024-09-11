@@ -1,0 +1,124 @@
+.top-head-title {
+    color: #525252;
+    font-weight: 700;
+    font-size: large;
+}
+
+.top-rows {
+    /* justify-content: space-around; */
+    width: 90%;
+}
+
+.top-column {
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+label.title-column {
+    font-size: small;
+    color: #848080;
+}
+
+.top-column-data {
+    background-color: #c6c4c4;
+    border-radius: 2px;
+    padding-right: 2vw;
+    padding-left: 0.2vw;
+    padding-top: 5%;
+    padding-bottom: 7%;
+}
+select#selectList {
+    background-color: #c6c4c4;
+    border-radius: 2px;
+}
+.top-dropdown {
+    background-color: #c6c4c4;
+    border-radius: 2px;
+    width: 15vw;
+}
+
+input#birthday {
+    background-color: #c6c4c4;
+    border-radius: 2px;
+    padding-top: 2%;
+    padding-bottom: 3%;
+}
+
+.top-column-data1 {
+    background-color: #c6c4c4;
+    border-radius: 2px;
+    padding-right: 2vw;
+    padding-left: 0.2vw;
+    padding-top: 5%;
+    padding-bottom: 7%;
+}
+
+.top-btns {display: flex;
+    margin-top: 1vh;
+    ;width: 80%;}
+
+button.btns {
+    color: white;
+    background-color: #2469d9;
+    border-radius: 5px;
+    border: none;
+    margin-right: 1vw;
+    padding-inline: 2vw;
+    height: 26px;
+}
+div#blank {
+    font-size: small;
+    color: white;
+}
+
+.top-container {
+    margin-bottom: 2%;
+    padding-left: 1%;
+    padding-top: 1%;
+}
+
+
+/* media query */
+@media screen and (min-width: 755px) {
+    .top-rows {
+        display: flex;
+        flex-wrap: wrap;
+        /* justify-content: space-around; */
+        width: 100vw;
+    }
+}
+@media screen and (max-width: 755px) {
+    .top-rows {
+        
+        flex-wrap: wrap;
+        /* justify-content: space-around; */
+        width: 100vw;
+    }
+    .top-dropdown {
+        
+        width: 80%;
+    }
+    .top-column-data1 {
+       
+        padding-top: 3%;
+        padding-bottom: 3%;
+        width: 80%;
+    }
+    .top-column-data {
+            padding-inline: 2%;
+            width: 80%;
+        padding-top: 2%;
+        padding-bottom: 2%;
+    }
+    .top-column {
+       padding-right: 10px;
+        align-items: center;
+        
+    }
+    input#birthday {
+        width: 80%;
+        padding-top: 2%;
+        padding-bottom: 2%;
+    }
+  }

@@ -1,0 +1,31 @@
+input[type='text']::placeholder
+    {   
+        text-align: right;      /* for Chrome, Firefox, Opera */
+    }
+    :-ms-input-placeholder
+    { 
+        text-align: right;      /* for IE 10-11 */
+    }
+    ::-webkit-input-placeholder
+    { 
+        text-align: right;      /* for IE Edge */
+    }
+    
+.form-control{
+  padding: 4px 0px;
+  font-size: 12px;
+  border-bottom: 1px solid gray;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+table,
+th,
+td {
+  border: 1px solid #e0e0e0;
+}
+thead{ z-index: 15;}
+thead tr {
+  background-color: grey;
+}

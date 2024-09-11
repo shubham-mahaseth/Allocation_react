@@ -1,0 +1,60 @@
+ "resolutions": {
+    "react-refresh": "0.14.0"
+  },
+--"@babel/plugin-proposal-private-property-in-object" is being used in your project, but it's not declared in your project's dependencies or devDependencies in the package.json file.
+
+"devDependencies": {
+  "@babel/plugin-proposal-private-property-in-object": "^1.0.0"  // Use the appropriate version
+}
+"react-refresh": "^0.14.0",
+npm install react-scripts@latest -f 
+npm install @pmmmwh/react-refresh-webpack-plugin@latest -f
+npm install @pmmmwh/react-refresh-webpack-plugin@latest react-native-render-html@latest -f
+npm ls react-refresh   --list the dependencies and their versions, focusing on the ones related to react-refresh
+
+--Multiple versions of the react-refresh package installed, which can potentially lead to compatibility issues or conflicts. This situation is known as dependency duplication.(conflicts between versions of internal dependencies or transitive dependencies ) npm ls react-refresh
+--Searches the local package tree and attempts to simplify the overall structure by moving dependencies further up the tree, where they can be more effectively shared by multiple dependent packages.
+
+npm update react-scripts react-native react-native-render-html -f
+npm dedupe -f
+npm install webpack@latest -f
+npm install -f
+
+
+npm install --save-dev @babel/plugin-transform-optional-chaining -f
+npm install --save-dev @babel/plugin-transform-object-rest-spread -f
+npm install --save-dev @babel/core -f
+npm install --save-dev @rollup/plugin-terser -f
+npm install --save-dev rollup -f
+
+npm install --save  react-dom@latest -f
+npm install --save  react@latest -f
+-- 19 DEC 2023
+npm install --save react-google-charts -f
+npm i react-apexcharts -f
+npm i @ant-design/plots -f
+
+npm install react-datepicker -f
+npm install @material-ui/icons -f
+npm install --save-dev @babel/plugin-proposal-private-property-in-object -f
+npm install react-refresh
+
+npm install emotion/react
+npm install @emotion/styled
+npm install @mui/icons-material
+npm install @mui/material
+npm install @mui/styles
+npm install @testing-library/jest-dom
+npm install @testing-library/react
+npm install @testing-library/user-event
+npm install axios
+npm install react
+npm install react-dom
+npm install react-excel-renderer
+npm install react-redux
+npm install react-router-dom
+npm install react-scripts
+npm install react-toastify
+npm install redux-actions
+npm install redux-saga
+npm install web-vitals
