@@ -1,23 +1,9 @@
-# Use Node.js as the base image
 FROM node:18.15.0-alpine
 
-# Set the working directory in the container
 WORKDIR /app
-
-# Copy package.json and yarn.lock to the container
 COPY package.json package-lock.json ./
-
-# Install dependencies
-# RUN npm install -f --frozen-lockfile
-
-# Install dependencies
 RUN npm install -f
-
-# Copy the app's source code to the container
+Run set NODE_OPTIONS=--max_old_space_size=4096
 COPY . .
-
-# Build the React app
-RUN npm build
-
-# Serve the build
-CMD ["npm", "serve", "-s", "build"]
+EXPOSE 3000
+CMD ["npm","start","0.0.0.0:3000"]
