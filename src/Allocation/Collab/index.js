@@ -199,12 +199,12 @@ const Collab = ({ commTabData, commFltrData, setCommFltrData }) => {
     const CollabStyle = useStyles();
     var filterDataStatus = true;
     useEffect(() => {
-    if (filterDataStatus && commFltrData.length ===0){
-        setCommFltrData(commTabData);
-        filterDataStatus = false;
-    }
+        if (filterDataStatus && commFltrData.length === 0) {
+            setCommFltrData(commTabData);
+            filterDataStatus = false;
+        }
     }, [commTabData]);
-    
+
     //CHECKBOX SELECT 
     const [selected, setSelected] = useState([]);
     const [order, setOrder] = React.useState('asc');
@@ -215,7 +215,7 @@ const Collab = ({ commTabData, commFltrData, setCommFltrData }) => {
             ##########  MANAGE COLUMNS IN TABLE  ############
             #################################################
       */
-   
+
     const [ManageHeaderCheck, setManageHeaderCheck] = useState(true);
     const [ManageHeaderData, setManageHeaderData] = useState([]);
 
@@ -439,7 +439,26 @@ const Collab = ({ commTabData, commFltrData, setCommFltrData }) => {
                                             <TableCell align="right" sx={{ fontFamily: "system-ui", textAlign: "left", fontSize: "75%", padding: "0px 0px 0px 3px", }}>{row.USER}</TableCell>
                                             : null}
                                         {ManageHeaderData.includes('TIME') ?
-                                            <TableCell align="right" sx={{ fontFamily: "system-ui", textAlign: "left", fontSize: "75%", padding: "0px 0px 0px 3px", }} >{row.TIME}</TableCell>
+                                            <TableCell align="right" sx={{ fontFamily: "system-ui", textAlign: "left", fontSize: "75%", padding: "0px 0px 0px 3px", }} >
+                                                {/* {row.TIME} */}
+                                                {
+                                                    (() => {
+                                                        const formatDate = (str) => {
+                                                            if (!str.includes(' ')) return str;
+
+                                                            const [datePart, timePart] = str.split(' ');
+                                                            const [year, month, day] = datePart.split('-');
+                                                            const formattedYear = year.slice(2) || 'yy';
+
+                                                            return `${month}-${day}-${formattedYear} ${timePart}`;
+                                                        };
+
+                                                        return formatDate(row.TIME);
+                                                    })()
+                                                }
+
+
+                                            </TableCell>
                                             : null}
                                     </TableRow >
                                 )) : null}
@@ -473,9 +492,9 @@ const Collab = ({ commTabData, commFltrData, setCommFltrData }) => {
 
     function descendingComparator(a, b, orderBy) {
         let c, d;
-        c = isNaN(b[orderBy]) ? typeof b[orderBy] !== "undefined" && (b[orderBy]).length>0 ?(b[orderBy]).toLowerCase():b[orderBy] : parseInt(b[orderBy]);
-        d = isNaN(a[orderBy]) ? typeof a[orderBy] !== "undefined" && (a[orderBy]).length>0 ?(a[orderBy]).toLowerCase():a[orderBy] : parseInt(a[orderBy]);
-       
+        c = isNaN(b[orderBy]) ? typeof b[orderBy] !== "undefined" && (b[orderBy]).length > 0 ? (b[orderBy]).toLowerCase() : b[orderBy] : parseInt(b[orderBy]);
+        d = isNaN(a[orderBy]) ? typeof a[orderBy] !== "undefined" && (a[orderBy]).length > 0 ? (a[orderBy]).toLowerCase() : a[orderBy] : parseInt(a[orderBy]);
+
         if (c === "NULL" || d === "NULL") {
             if (c === "NULL" && d !== "NULL") {
                 return -1

@@ -1964,6 +1964,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       setAllPageSelected([]);
       setPage(0)
       setIsLoading(false);
+	  CreateAllocationData.data.totalData.status = 0;
     }
   }, [CreateAllocationData])
 
@@ -12138,15 +12139,28 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
                                                 }}
                                               >
                                                 {/* {row.REF_2} */}
-                                                {row.REF_2.includes('/')
-                                                  ? (() => {
-                                                    const lastSlashIndex = row.REF_2.lastIndexOf('/');
-                                                    const lastPart = row.REF_2.substring(lastSlashIndex + 1);
-                                                    const [year, month, day] = lastPart.split('-');
+                                                {(() => {
+                                                  const formatDate = (str, type) => {
+                                                    if (!str.includes('/')) return str;
+                                              
+                                                    const slashIndex = type === "Purchase Order" ? str.lastIndexOf('/') : str.indexOf('/');
+                                                    const [year, month, day] = (type === "Purchase Order" 
+                                                      ? str.substring(slashIndex + 1) 
+                                                      : str.substring(0, slashIndex)
+                                                    ).split('-');
                                                     const formattedYear = year ? year.slice(2) : 'yy';
-                                                    return `${row.REF_2.substring(0, lastSlashIndex + 1)}${month}-${day}-${formattedYear}`;
-                                                  })()
-                                                  : row.REF_2}
+                                              
+                                                    return type === "Purchase Order"
+                                                      ? `${str.substring(0, slashIndex + 1)}${month}-${day}-${formattedYear}`
+                                                      : `${month}-${day}-${formattedYear}${str.substring(slashIndex)}`;
+                                                  };
+                                              
+                                                  const { ALLOC_CRITERIA } = searchHeaderData;
+                                                  return ALLOC_CRITERIA === "Purchase Order" || ALLOC_CRITERIA === "ASN"
+                                                    ? formatDate(row.REF_2, ALLOC_CRITERIA)
+                                                    : row.REF_2;
+                                                })()
+                                                }
                                               </InputLabel>
 
                                               <Button sx={{
@@ -12164,15 +12178,27 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
                                                 onClick={() => {
                                                   setOpenDialog(true);
                                                   setDialogData(String(
-                                                    row.REF_2.includes('/')
-                                                      ? (() => {
-                                                        const lastSlashIndex = row.REF_2.lastIndexOf('/');
-                                                        const lastPart = row.REF_2.substring(lastSlashIndex + 1);
-                                                        const [year, month, day] = lastPart.split('-');
+                                                    (() => {
+                                                      const formatDate = (str, type) => {
+                                                        if (!str.includes('/')) return str;
+                                                  
+                                                        const slashIndex = type === "Purchase Order" ? str.lastIndexOf('/') : str.indexOf('/');
+                                                        const [year, month, day] = (type === "Purchase Order" 
+                                                          ? str.substring(slashIndex + 1) 
+                                                          : str.substring(0, slashIndex)
+                                                        ).split('-');
                                                         const formattedYear = year ? year.slice(2) : 'yy';
-                                                        return `${row.REF_2.substring(0, lastSlashIndex + 1)}${month}-${day}-${formattedYear}`;
-                                                      })()
-                                                      : row.REF_2
+                                                  
+                                                        return type === "Purchase Order"
+                                                          ? `${str.substring(0, slashIndex + 1)}${month}-${day}-${formattedYear}`
+                                                          : `${month}-${day}-${formattedYear}${str.substring(slashIndex)}`;
+                                                      };
+                                                  
+                                                      const { ALLOC_CRITERIA } = searchHeaderData;
+                                                      return ALLOC_CRITERIA === "Purchase Order" || ALLOC_CRITERIA === "ASN"
+                                                        ? formatDate(row.REF_2, ALLOC_CRITERIA)
+                                                        : row.REF_2;
+                                                    })()
                                                   ));
                                                 }}
                                                 startIcon={<InfoIcon style={{ fontSize: 16, backgroundColor: "" }} />}
