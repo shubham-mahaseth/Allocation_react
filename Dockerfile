@@ -8,10 +8,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN npm install --frozen-lockfile
+# RUN npm install -f --frozen-lockfile
 
 # Install dependencies
-RUN npm install
+RUN npm install -f
 
 # Copy the app's source code to the container
 COPY . .

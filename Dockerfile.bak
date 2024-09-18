@@ -1,16 +1,3 @@
-FROM node:alpine
-
-WORKDIR /Allocation_react
-COPY package.json ./
-Run npm install -g npm@8.15.0
-Run set NODE_OPTIONS=--max_old_space_size=4096
-COPY . ./
-COPY node_modules ./
-EXPOSE 3000
-CMD ["npm","start"]
-
-
-
 # Use Node.js as the base image
 FROM node:18.15.0-alpine
 
@@ -21,10 +8,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN npm install --frozen-lockfile
+RUN npm install -f --frozen-lockfile
 
 # Install dependencies
-RUN npm install
+RUN npm install -f
 
 # Copy the app's source code to the container
 COPY . .
