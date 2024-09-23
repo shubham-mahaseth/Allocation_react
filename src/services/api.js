@@ -202,4 +202,7 @@ export const API = {
     SEEDHIER3:'/insHier3/',
     SEEDITMDTL:'/insItmDtl/',
     REPORT: '/genReport/',
+    USRDTLS: '/currrole/',
+    USRSDATA : '/userList/',
+    UPDSTATUS : '/updStatus/',
   };

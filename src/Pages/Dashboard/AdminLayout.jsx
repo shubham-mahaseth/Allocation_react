@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -28,6 +28,7 @@ import { GetItems } from "../../Constants/menu";
 import { makeStyles } from "@mui/styles";
 import { Typography } from "@mui/material";
 import AllocationBatches from "../../Allocation/Batches";
+import { RolesList } from "../../Admin/roleList";
 
 const drawerWidth = 0;
 
@@ -138,6 +139,33 @@ export default function Index() {
 
   const [menuName, setMenuName] = useState('Home');
   const [batchState, setBatchState] = useState(false);
+  const [fltrItems, setFltrItems] = useState([]);
+  const currentUser = JSON.parse(localStorage.getItem("userData"))?.username;
+  const currentRole = JSON.parse(localStorage.getItem("userData"))?.role_id;
+  useEffect(() => {
+    if(currentUser.length > 0 && (currentRole !=1 && currentRole !=2 )){
+      const data = items?.list?.filter(row => row.id !== 10); 
+      setFltrItems({ list: data });
+      console.log("menu list :: ",data,currentRole)
+    }else{
+      setFltrItems(items)
+    }
+    // if (!["admin", "Tarun", "Akhil"].includes(currentUser)) {
+    //   const data = items?.list?.filter(row => row.id !== 13); 
+    //   setFltrItems({ list: data });
+    // } else {
+    //   setFltrItems(items);
+    // }
+    // if (currentUser === RolesList[0].USER && RolesList[0].USER_ROLE === 'CARRIER') {
+    //   const data = items?.list?.filter(row => row.id === 11)
+    //   data.forEach(item => {
+    //     if (item.id === 11 && item.subitems) {
+    //       item.subitems = item.subitems.filter(subitem => subitem.id !== 2 && subitem.id !== 3);
+    //     }
+    //   });
+    //   setFltrItems({ list: data });
+    // }
+  }, [currentUser]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -260,9 +288,12 @@ export default function Index() {
   const handleChange = (index, itemData) => {
     handleClick(index);
     handleHomePage(itemData?.name);
-    if (itemData?.id === 12) {
+    if (itemData?.id === 2) {
       handleDrawerOpen()
       navigate(`/AllocDashboard`);
+    }else if (itemData?.id === 10) {
+      navigate(`/AdminLayoutPage`);
+      handleDrawerClose();
     } else if (itemData?.id !== 0) {
       handleDrawerOpen()
     } else {
@@ -281,7 +312,6 @@ export default function Index() {
   }
   const Layoutclasses = useStyles();
 
-  console.log("Admin Layout")
   return (
     <>
       <Box sx={{ display: "flex", bgcolor: "white", height: "100vh" }}>
@@ -348,7 +378,7 @@ export default function Index() {
             component="nav"
             aria-labelledby="nested-list-subheader"
           >
-            {items?.list?.map((itemsData, index) => {
+            {fltrItems?.list?.map((itemsData, index) => {
               return (
                 <>
                   <ListItemButton

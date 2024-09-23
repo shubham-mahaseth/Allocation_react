@@ -24,6 +24,8 @@ import AllocDashboard from "./Allocation/Dashboard";
 import TemplateDownload from "./Allocation/SeedData/Template";
 import DataProcessing from "./Allocation/SeedData/Upload";
 import ShowReport from "./Allocation/Reports";
+import AdminLayoutPage from "./Admin"
+
 function Routing() {
   return (
     <Routes>
@@ -56,6 +58,8 @@ function Routing() {
         <Route path="/download_template" element={<TemplateDownload/>}/>
         <Route path="/upload" element={<DataProcessing/>}/>
         <Route path="/report" element={<ShowReport/>}/>
+        <Route path="/AdminLayoutPage" element={<AdminLayoutPage />} />
+
       </Route>
     </Routes>
   );

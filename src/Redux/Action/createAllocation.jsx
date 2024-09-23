@@ -577,3 +577,13 @@ export const postInsCommError = createAction(
   actions.POST_INSCOMM_ERROR
 );
 
+/* SUBMITTED ALLOC STATUS */
+export const postUPDSTATUSRequest = createAction(
+  actions.POST_UPDSTATUS_REQUEST
+);
+export const postUPDSTATUSSuccess = createAction(
+  actions.POST_UPDSTATUS_SUCCESS
+);
+export const postUPDSTATUSError = createAction(
+  actions.POST_UPDSTATUS_ERROR
+);

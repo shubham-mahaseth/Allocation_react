@@ -187,7 +187,11 @@ export const GetItems = () => {
   };
   let json = {
     list: [
-
+      {
+        id: 10,
+        name: "Admin",
+        icon: <HomeIcon sx={{ color: "#b4b4b4" }} />,
+      },
       {
         id: 1,
         name: "Allocation",

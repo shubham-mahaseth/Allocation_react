@@ -568,6 +568,7 @@ const AllocSummary = ({ DashSearch }) => {
     const [currentPageData, setcurrentPageDataAllSumm] = useState([]);
     const [currentPageRows, setcurrentPageRowsAllSumm] = useState([]);
     const [allPageSelected, setAllPageSelected] = useState([]);
+    const [userRole, setUserRole] = useState(null);
     const startIndex = page * rowsPerPage;
 
     const [isSHovered1, setIsHovered1] = useState(false);
@@ -598,6 +599,8 @@ const AllocSummary = ({ DashSearch }) => {
     useEffect(() => {
         if (typeof JSON.parse(localStorage.getItem("userData"))?.username === "undefined") {
             navigate(`/`);
+        } else {
+            setUserRole(JSON.parse(localStorage.getItem("userData"))?.role_id);
         }
     }, []);
 
@@ -740,7 +743,7 @@ const AllocSummary = ({ DashSearch }) => {
             if (AllocSummaryData1?.data?.srcData.length > 0 && srch) {
                 setIsLoadingAllocSumm(false);
 
-                
+
                 const sortData = stableSort(AllocSummaryData1?.data?.srcData, getComparator('desc', 'ALLOC_NO'));
                 setTabFltrData(sortData);
                 setTabData(sortData);
@@ -776,7 +779,7 @@ const AllocSummary = ({ DashSearch }) => {
             AllocSummaryData1.data.srcData = 0;
         } else if (AllocSummaryData1?.data?.validCheck && Array.isArray(AllocSummaryData1?.data?.validCheck)) {
             setCheck(true);
-                setIsLoadingAllocSumm(false);
+            setIsLoadingAllocSumm(false);
             AllocSummaryData1.data.validCheck = 0;
             setLoadCheckAllcSumm(true);
             setRLCheck(AllocSummaryData1?.data?.validCheck[0]);
@@ -1023,7 +1026,7 @@ const AllocSummary = ({ DashSearch }) => {
             </div>
         </div>
     );
-    console.log("check Time Zone ::", new Date());
+    console.log("check Time Zone ::", new Date(), "  role : ", userRole);
 
     const convert_Date_picker = (val) => {
         //'' yyyy-mm-dd
@@ -1877,7 +1880,7 @@ const AllocSummary = ({ DashSearch }) => {
         reqSearch.RELEASE_DATE_TO = String(reqSearch.RELEASE_DATE_TO).length > 0 ? convertDateFormat1(reqSearch.RELEASE_DATE_TO) : "";
         reqSearch.CREATE_DATE_FROM = String(reqSearch.CREATE_DATE_FROM).length > 0 ? convertDateFormat1(reqSearch.CREATE_DATE_FROM) : "";
         reqSearch.CREATE_DATE_TO = String(reqSearch.CREATE_DATE_TO).length > 0 ? convertDateFormat1(reqSearch.CREATE_DATE_TO) : "";
-        
+
         //console.log("Request data:: ", reqSearch, searchData)
         setIsLoadingAllocSumm(true);
         setSrch(true);
@@ -5905,20 +5908,26 @@ const AllocSummary = ({ DashSearch }) => {
                                             startIcon={<ReportIcon />}
                                         >
                                             Alert</Button> */}
-
-                                    <Button
-                                        sx={{
-                                            backgroundColor: "DodgerBlue",
-                                            fontSize: "12px", padding: "5px", fontFamily: "system-ui",
-                                            width: "170px", marginLeft: "5px", marginTop: "2px",
-                                        }}
-                                        variant="contained"
-                                        type="submit"
-                                        startIcon={<RecommendOutlinedIcon />}
-                                        onClick={handleApproveAlloc}
-                                    >
-                                        Approve Allocation</Button>
-
+                                    {userRole !== 1 && userRole !== 2 ? null :
+                                        <Button
+                                            sx={{
+                                                backgroundColor: "DodgerBlue",
+                                                fontSize: "12px", padding: "5px", fontFamily: "system-ui",
+                                                width: "170px", marginLeft: "5px", marginTop: "2px",
+                                                '&.Mui-disabled': {
+                                                    opacity: 0.5,
+                                                    backgroundColor: 'DodgerBlue',
+                                                    color: '#fff',
+                                                },
+                                            }}
+                                            variant="contained"
+                                            type="submit"
+                                            startIcon={<RecommendOutlinedIcon />}
+                                            onClick={handleApproveAlloc}
+                                        // disabled={userRole !== 1 && userRole !== 2}
+                                        >
+                                            Approve Allocation</Button>
+                                    }
                                     {/* <Button
                                             sx={{
                                                 backgroundColor: "DodgerBlue",

@@ -32,16 +32,15 @@ import { visuallyHidden } from '@mui/utils';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import { styled } from '@mui/material/styles';
 import TablePagination from '@mui/material/TablePagination';
-
+import ViewColumnIcon from '@mui/icons-material/ViewColumn';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import AnimationIcon from '@mui/icons-material/Animation';
+import Checkbox from '@mui/material/Checkbox';
 
 const useStyles = makeStyles({
   maindiv: {
     position: "relative",
-    // backgroundColor:"yellow",
-    // width:"100%",
-    //width: "calc(95vw - 0px)",
-
-    marginTop: "65px",
+    margin: "40px 0px 0px 10px",
     "& table": {
       "& tr": {
         "& td:nth-child(26)": {
@@ -60,15 +59,8 @@ const useStyles = makeStyles({
     textAlign: "initial",
     position: "relative",
     maxWidth: "1400px",
-    // backgroundColor:"yellow"
   },
-  uploaddiv: {
-    display: "flex",
-    alignItems: "center",
-    marginTop: "50px",
-    textAlign: "start",
-    gap: 20,
-  },
+
   TitleHead: {
     position: "sticky",
     top: -1,
@@ -85,50 +77,17 @@ const useStyles = makeStyles({
       color: "rgba(102,102,102,1)",
     },
   },
-  popUp: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    backgroundColor: "white",
-    border: "2px solid #000",
-    boxShadow: 24,
-    padding: "20px 20px 20px 20px",
-  },
   input: {
-    // width: "250px",
     height: "30px",
-    // backgroundColor:"#f0f0f0",
     '& input + fieldset': {
-      // borderColor: 'gray',
-      // borderRadius: "0",
       boxShadow: "rgba(0, 0, 0, 0.19) 0px 1px 2px, rgba(0, 0, 0, 0.23) 0px 2px 2px"
     },
   },
-  inputFielddate: {
-    width: "200px",
-    // margin:"10px 0px 0px 0px",
-    height: 38,
-    border: 0,
-    // backgroundColor:"#f0f0f0",
-    '& input + fieldset': {
-      // borderColor: 'gray',
-      borderRadius: "0",
-      boxShadow: "rgba(0, 0, 0, 0.19) 0px 1px 2px, rgba(0, 0, 0, 0.23) 0px 2px 2px"
-    },
-  },
- 
   header_child: {
     display: "flex",
-    justifyContent:"flex-end",
-    // display: "inline-block",
-    // border: "1px solid red",
-    //padding: "0rem 0.2rem",
+    justifyContent: "flex-end",
     verticalAlign: "middle",
   },
-
-
   TableCell: {
     color: "#fff",
     padding: "6px 6px !important",
@@ -138,36 +97,6 @@ const useStyles = makeStyles({
     height: 15,
     width: "100%",
   },
-  inputPlaceHolder: {
-    // border:"1px solid red",
-    "&::placeholder": {
-      color: "red",
-      textAlign: "left"
-    }
-  },
-  course_box: {
-    // backgroundColor:"lightgray"
-    // border:"2px solid red",
-  },
-  TableBoby: {
-    marginBottom: "0px"
-  },
-  grid_block: {
-    // backgroundColor:"lightgray"
-  },
-  TableTotalBoby: {
-    // border:"1px solid red",
-    padding: "0px",
-    margin: "0px",
-  },
-  multiselectfield: {
-    display: "inline-block",
-    // border: "1px solid red",
-    margin: "0rem",
-    padding: "0rem 0rem",
-    verticalAlign: "middle",
-  },
-
 });
 
 function PaperComponent(props) {
@@ -197,6 +126,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     textAlign: "left"
   },
 }));
+
 const ReportTabHeadDtl = [
   { id: "ITEM_ID", label: "Item id", width: "120px" },
   { id: "TOTAL_ALLOCATED_QTY", label: "Total Allocated Qty", width: "200px" },
@@ -217,6 +147,9 @@ const ShowReport = () => {
   const [inputVal, setInputVal] = useState({});
 
   const [isScreenBigger, setIsScreenBigger] = useState(window.innerWidth < 1500 ? false : true);
+  const [isSHovered1, setIsHovered1] = useState(false);
+  const handleSEnter1 = () => { setIsHovered1(true); };
+  const handleSLeave1 = () => { setIsHovered1(false); };
 
   const [rowsPerPage, setRowsPerPage] = React.useState(30);
   const [page, setPage] = React.useState(0);
@@ -240,22 +173,20 @@ const ShowReport = () => {
   }, [load]);
   const handleResize = () => {
     const screenWidth = window.innerWidth;
-    const breakpoint = 1024; // Set your desired breakpoint here
-    // //console.log("screenWidth ",screenWidth,(isScreenBigger?25:15),screenWidth < 1366? false: true)
     setIsScreenBigger(screenWidth < 1500 ? false : true);
-};
+  };
 
 
-
-useEffect(() => {
+  // TABLE RESIZE
+  useEffect(() => {
     // document.title = 'Alloc Summary';
     window.addEventListener('resize', handleResize);
-
     // Clean up the event listener on component unmount
     return () => {
-        window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleResize);
     };
-}, []);
+  }, []);
+
   useEffect(() => {
     if (ReportData?.data?.rptData && Array.isArray(ReportData?.data?.rptData)) {
       setIsLoading(false);
@@ -300,11 +231,6 @@ useEffect(() => {
 
   // console.log("table data", tabData, fltrtabData, inputVal, ReportData.data.rptData, rptTabHdDtl);
 
-
-
-
-
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
     const temp = tabData.slice(newPage * rowsPerPage, newPage * rowsPerPage + rowsPerPage)
@@ -320,15 +246,68 @@ useEffect(() => {
     setPage(0);
   };
 
+
+
   /*
            #################################################
            ##########  MANAGE COLUMNS IN TABLE  ############
            #################################################
      */
+  // Manage columns popup in Table Grid
+  const [openDialogManage, setOpenDialogManage] = useState(false);
 
   const [ManageHeaderCheck, setManageHeaderCheck] = useState(true);
   const [ManageHeaderData, setManageHeaderData] = useState([]);
 
+  const HandleManageHeader = () => {
+    setOpenDialogManage(true);
+  }
+  const handleCloseDialogManage = (e) => {
+    if (ManageHeaderData.length > 0) { setOpenDialogManage(false); }
+    else { setOpenDialog(true); setDialogData("Table must contain atleast one column."); }
+  }
+  const handleManageHeaderClick = (e, name) => {
+    if (e.target.checked === true) {
+      const updatedManageHeaderData = [...ManageHeaderData, name];
+      setManageHeaderData(updatedManageHeaderData)
+    } else {
+      const updatedManageHeaderData = ManageHeaderData.filter(item => item !== name);
+      setManageHeaderData(updatedManageHeaderData)
+    }
+  }
+  const handleShowAllManageHeader = () => {
+    var temp = []
+    rptTabHdDtl.map(row => temp.push(row.id));
+    setManageHeaderData(temp);
+  }
+  const headerManage = () => (
+    <Box display="inline-block"
+      sx={{ backgroundColor: "", height: "auto", padding: "0rem 0rem", width: "100%", }}>
+      <div>
+        {rptTabHdDtl.map((key) => (
+          <div key={key.id}>
+            <FormControlLabel
+              size="small"
+              sx={{ padding: "0px", margin: "0px 0px 0px 0px", }}
+              control={
+                <Checkbox
+                  sx={{ margin: "0px 0px 0px 0px", padding: "2px", paddingTop: "0px" }}
+                  color="primary"
+                  size="small"
+                  onClick={(event) => [handleManageHeaderClick(event, key?.id)]}
+                  checked={ManageHeaderData.includes(key.id)}
+                  style={{ padding: "0px", textAlign: "center", }}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+              }
+              label={<InputLabel
+                sx={{ fontWeight: "bold", fontSize: "12px", margin: "0px 0px 0px 0px", padding: "0px 0px 0px 0px", display: 'inline', float: 'left', }}>
+                {key.label}</InputLabel>}
+            /></div>
+        ))}
+      </div>
+    </Box>
+  )
   if (ManageHeaderCheck && rptTabHdDtl.length > 0) {
     var temp = []
     rptTabHdDtl.map(row => temp.push(row.id));
@@ -340,6 +319,7 @@ useEffect(() => {
     setOpenDialog(false);
     setDialogData("")
   }
+
   /* TABLE HEADER */
   function ReportTableHead(props) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
@@ -351,7 +331,7 @@ useEffect(() => {
     return (
       <>
         <TableHead
-          className={ReportStyle.TitleHead} sx={{ background: "yellow", margin: "0", padding: "0"}}
+          className={ReportStyle.TitleHead} sx={{ background: "yellow", margin: "0", padding: "0" }}
         >
           <TableRow className={ReportStyle.TitleRow} sx={{ background: "yellow", margin: "0", padding: "0" }}
           >
@@ -397,9 +377,9 @@ useEffect(() => {
                 </TableSortLabel>
               </StyledTableCell>
             ))}
-            
+
           </TableRow>
-          
+
         </TableHead>
 
       </>
@@ -511,33 +491,61 @@ useEffect(() => {
 
 
   return (
-    <Box className={ReportStyle.maindiv} >
+    <Box className={ReportStyle.maindiv}
+    >
+
       {tabData.length > 0 ?
         <Box
           component="fieldset"
           display="inline-block"
           sx={{
-            backgroundColor: "",
-            width: "100%",
-            border: '0',
-            // borderRadius: 1,
-            // boxShadow: 2,
-            // borderBottom: 3,
-            // border: "1px solid lightgrey",
+            backgroundColor: "", padding: "0px 0px 0px 0px",
+            borderRadius: 1, boxShadow: 2, border: "0", borderBottom: 3, backgroundColor: "", width: "calc(92vw - 0px)",
+            // width: "100%",
+            // border: '0',            
+
             margin: "35px 0px 0px 0px",
 
           }}
         >
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+            <div
+              style={{
+                flex: "0", // Ensures it doesn't take up more space than needed
+                backgroundColor: isSHovered1 ? '#f5f5f5' : 'white',
+                borderRadius: '20%', padding: "0px 8px",
+                margin: "2px", height: "30px",
+                minHeight: "30px", display: "flex", // Aligns the content inside
+                alignItems: "center", // Centers the icon vertically
+              }}
+              title="Manage Columns"
+              onMouseEnter={handleSEnter1}
+              onMouseLeave={handleSLeave1}
+            >
+              <ViewColumnIcon
+                style={{
+                  padding: "0px",
+                  backgroundColor: isSHovered1 ? '#f5f5f5' : 'white',
+                  color: "DodgerBlue",
+                  cursor: "pointer" // Makes the icon clickable with pointer cursor
+                }}
+                onClick={HandleManageHeader}
+                title="Manage Columns"
+              />
+            </div>
+          </div>
 
           {/* <legend style={{
           fontWeight: "bold",//fontSize: "16px",
           color: "#191970"
         }}>Comments</legend> */}
 
-          <Paper sx={{ margin: "0px 0px 0px 0px",// width: "fit-content",
-           }}
+          <Paper sx={{
+            margin: "0px 0px 0px 0px",// width: "fit-content",
+            padding:"0px 5px 5px 5px",borderRadius: 0, boxShadow: 0, border: "0"
+          }}
           >
-            <TableContainer style={{ 
+            <TableContainer style={{
               maxHeight: (isScreenBigger ? 700 : 420),
               // maxHeight: "450px",//maxHeight: "fit-content", 
               // width: "fit-content",
@@ -559,48 +567,48 @@ useEffect(() => {
                 {/* <TableHead className={ReportStyle.TitleHead}>
                <TableRow  sx={{ backgroundColor: "white", padding: "0px", margin: "0px", }}> */}
                 {Object.keys(fltrtabData[0]).map((col) => {
-                    const matchedColumn = rptTabHdDtl.find((item) => item.id === col);
-                    const placeholderLabel = matchedColumn ? matchedColumn.label : '';
+                  const matchedColumn = rptTabHdDtl.find((item) => item.id === col);
+                  const placeholderLabel = matchedColumn ? matchedColumn.label : '';
 
-                    return ManageHeaderData.includes(col) ? (
-                      <TableCell
-                        key={col}
-                        sx={{
-                          padding: "0px",
-                          height: "22px",
+                  return ManageHeaderData.includes(col) ? (
+                    <TableCell
+                      key={col}
+                      sx={{
+                        padding: "0px",
+                        height: "22px",
+                      }}
+                    >
+                      <TextField
+                        name={col}
+                        onChange={gridFilter}
+                        value={inputVal && inputVal[col] ? inputVal[col] : ""}
+                        placeholder={placeholderLabel}
+                        autoComplete="off"
+                        InputProps={{
+                          sx: {
+                            fontSize: 12, padding: "0px",
+                            height: "20px", textAlign: "left",
+                          },
                         }}
-                      >
-                        <TextField
-                          name={col}
-                          onChange={gridFilter}
-                          value={inputVal && inputVal[col] ? inputVal[col] : ""}
-                          placeholder={placeholderLabel}
-                          autoComplete="off"
-                          InputProps={{
-                            sx: {
-                              fontSize: 12, padding: "0px",
-                              height: "20px", textAlign: "left",
+                        sx={{ width: "100%", }}
+                        variant="standard"
+                        inputProps={{
+                          sx: {
+                            fontSize: 12, padding: "0px 0px 0px 3px",
+                            height: "20px", textAlign: "left",
+                            "&::placeholder": {
+                              textAlign: "left", padding: "0px",
                             },
-                          }}
-                          sx={{ width: "100%", }}
-                          variant="standard"
-                          inputProps={{
-                            sx: {
-                              fontSize: 12, padding: "0px 0px 0px 3px",
-                              height: "20px", textAlign: "left",
-                              "&::placeholder": {
-                                textAlign: "left", padding: "0px",
-                              },
-                            },
-                          }}
-                        />
-                      </TableCell>
-                    ) : null;
-                  })}
+                          },
+                        }}
+                      />
+                    </TableCell>
+                  ) : null;
+                })}
                 {/* </TableRow>
                 </TableHead> */}
                 <TableBody >
-                
+
                   {currentPageData.length > 0 ?
                     stableSort(currentPageData, getComparator(order, orderBy)).map(row => (
                       <TableRow  >
@@ -626,8 +634,8 @@ useEffect(() => {
 
                       </TableRow >
                     )) : null}
-                  {currentPageData.length < 15 ?
-                    [...Array(15 - currentPageData.length).keys()].map(val => (
+                  {currentPageData.length < (isScreenBigger ? 30 : 15) ?
+                    [...Array((isScreenBigger ? 30 : 15) - currentPageData.length).keys()].map(val => (
                       <TableRow  >
                         {ManageHeaderData.map((row, index) => {
                           return (
@@ -655,16 +663,52 @@ useEffect(() => {
                   page={page}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
-                  sx={{ '& .MuiToolbar-root': { minHeight: '20px',maxHeight:'35px' }, }}
+                  sx={{ '& .MuiToolbar-root': { minHeight: '20px', maxHeight: '40px' }, }}
                 />
               </div>
 
               : null}
           </Paper>
-
-
         </Box>
         : null}
+
+      {/* MANAGE COLUMNS */}
+      <div>
+        <Dialog
+          // fullWidth={true}
+          maxWidth="xs"
+          open={openDialogManage}
+          PaperComponent={PaperComponent}
+          aria-labelledby="draggable-dialog-title"
+          disableBackdropClick
+        >
+          <DialogTitle sx={{
+            fontSize: '18px', // Modify the font size here
+
+            height: '25px', // Adjust the height here
+            padding: '2px 0px 2px 12px',// Adjust the paddingTop here
+            margin: "0px 0px 0px 0px",
+          }}>Manage Columns</DialogTitle>
+          <DialogContent id="draggable-dialog-title" sx={{ fontSize: "16px", userSelect: 'text', padding: "0px 0px 0px 10px", height: "240px", margin: "0px 10px 0px 0px" }} >
+            {headerManage()}
+          </DialogContent>
+          <DialogActions sx={{ display: "flex", justifyContent: "space-between", }}>
+            <Button sx={{ backgroundColor: "", fontSize: "12px", margin: "0px 5px 0px 0px", width: "125px" }}
+              onClick={handleShowAllManageHeader} autoFocus variant="contained" startIcon={<AnimationIcon />}>
+              Show All
+            </Button>
+
+            <Box>
+              <Button sx={{ backgroundColor: "", fontSize: "12px", margin: "0px 0px 0px 0px", width: "100px" }}
+                onClick={handleCloseDialogManage} autoFocus variant="contained" startIcon={<DoneAllIcon />}>
+                Ok
+              </Button>
+            </Box>
+          </DialogActions>
+        </Dialog>
+      </div>
+
+      {/* DISPLAY ERROR IF ANY */}
       <div>
         <Dialog
           fullWidth={true}
@@ -686,6 +730,8 @@ useEffect(() => {
           </DialogActions>
         </Dialog>
       </div>
+
+      {/* LOADING */}
       <Modal open={isLoading}>
         <div
           style={{
@@ -699,7 +745,6 @@ useEffect(() => {
           <CircularProgress color="secondary" />
         </div>
       </Modal>
-
     </Box>
   )
 

@@ -1868,9 +1868,33 @@ const CreateAllocationReducers = (state = initialState, action) => {
                 isError: true,
                 message: action.payload?.Data?.message,
                 isSuccess: false,
-            };    
+            };
         //COLLAB COMMENTS END
-       
+        case actions.POST_UPDSTATUS_REQUEST:
+            return {
+                ...state,
+                isLoading: true,
+                isError: false,
+                message: "",
+                isSuccess: false,
+            };
+        case actions.POST_UPDSTATUS_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                data: action.payload,
+                isError: false,
+                message: action.payload?.Data?.message,
+                isSuccess: false,
+            };
+        case actions.POST_UPDSTATUS_ERROR:
+            return {
+                ...state,
+                isLoading: false,
+                isError: true,
+                message: action.payload?.Data?.message,
+                isSuccess: false,
+            };
         default:
             return { ...state };
     }

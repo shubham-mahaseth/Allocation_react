@@ -24,6 +24,7 @@ import {
   ErrorReportData, APPROVEFUNCTIONtData, APPROVEVALIDFUNCTIONtData, CREATEGRIDDFfuncData, RESERVEFUNCTIONtData, WORKSHEETFUNCTIONtData,
   SpreadAllocData, SizeProData, SchdlSvData, SchdlRtvData, AllocQty, COMMITDATAData,
   CopyAD, fetchNN, MULTIPOCREATEData, VALIDRLCHECKDATAData, ADSaveCall, SDSaveCall, CollabCommData, PostCollabCommData,
+  PostAllocStatus,
 } from "./CreateAllocationSaga";
 import {
   ALLOCHEADDETAILSData, QTYLIMITSData, ALLOCNODETAILSData,
@@ -60,6 +61,7 @@ import {
 
 } from "./SeedDataInsertSaga";
 import {  RPTData,} from "./ReportsSaga";
+import { RtvUsrDtls,RtvUsrsData } from "./UserConfigDetailsSaga";
 
 export function* rootSaga() {
   yield all([
@@ -233,5 +235,9 @@ export function* rootSaga() {
     fork(postSeedH3),
     fork(postSeedItmDtl),
     fork(RPTData),
+    fork(RtvUsrDtls),
+    fork(RtvUsrsData),
+    /* SUBMITTED ALLOC STATUS */
+    fork(PostAllocStatus),
   ]);
 }

@@ -112,7 +112,7 @@ import {
   postSDSaveSuccess, postSDSaveError,
   postRtvCommSuccess, postRtvCommError,
   postInsCommSuccess, postInsCommError,
-  
+  postUPDSTATUSSuccess, postUPDSTATUSError
 } from "../Action/createAllocation";
 import * as actions from "../constant";
 import axiosCall from "../../services/index";
@@ -1195,3 +1195,20 @@ export function* PostCollabCommData() {
 }
 
 
+/*SUBMITTED ALLOC STATUS */
+function* postStatus(action) {
+  try {
+    const response = yield call(axiosCall, "POST", API.UPDSTATUS, action.payload);
+    if (response?.status == 200) {
+      yield put(postUPDSTATUSSuccess({ updStatus: response?.data }));
+    } else {
+      yield put(postUPDSTATUSError(response?.data?.message));
+    }
+  } catch (e) {
+    yield put(postUPDSTATUSError(e.message));
+  }
+}
+
+export function* PostAllocStatus() {
+  yield takeLatest(actions.POST_UPDSTATUS_REQUEST, postStatus);
+}

@@ -4385,7 +4385,7 @@ const AllocDetails = ({ allocNoData, setTab, setDisCond, ApproveFreeseCheck, adD
                                                                                                 // border:"1px solid red"
                                                                                             },
                                                                                         }}
-                                                                                        disabled={ApproveFreeseCheck || alloc_Dtls.length ? alloc_Dtls[0].ALLOC_CRITERIA === "F" : false}
+                                                                                        disabled={ApproveFreeseCheck ||( alloc_Dtls.length ? alloc_Dtls[0].ALLOC_CRITERIA === "F" : false)}
                                                                                         inputProps={{
                                                                                             maxLength: 20,
                                                                                             sx: { padding: "0px 0px 0px 5px", height: "20px", width: "100%", backgroundColor: "#fff", textAlign: "left" }

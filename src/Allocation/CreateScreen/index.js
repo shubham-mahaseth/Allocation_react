@@ -71,6 +71,7 @@ import {
   postCOMMITDATARequest,
   postRtvCommRequest,
   postInsCommRequest,
+  postUPDSTATUSRequest,
 } from "../../Redux/Action/createAllocation";
 import { getRTVRLDATARequest } from "../../Redux/Action/rules&location";
 import { postSwitchASYRequest } from "../../Redux/Action/allocSummary";
@@ -877,7 +878,8 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
   const [currentPageRows, setcurrentPageRows] = useState([]);
   const [allPageSelected, setAllPageSelected] = useState([]);
   const [calcStatus, setCalcStatus] = useState(false);
-
+  const [subCalcStatus, setSubCalStatus] = useState(false);
+  const [subWkStatus, setSubWkStatus] = useState(true);
   const [checkOkWhatIfSummCheck, setCheckOkWhatIfSummCheck] = useState(false);
   const [CreateStatusButtonChange, setCreateStatusButtonChange] = useState(false);
   // COLLAB STATE
@@ -899,7 +901,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
     Number('20' + initialDateParts[2]), // Year
     Number(initialDateParts[0]) - 1, // Month (0-based index)
     Number(initialDateParts[1]) // Day
-  ); console.log("initialDateR main ::", initialDateR, initialDateParts)
+  );
   const [initialDateRD, setInitialDateRD] = useState(initialDateR);
 
 
@@ -937,6 +939,10 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  /*USER ROLE */
+  const [userRole, setUserRole] = useState(null); // USER ROLE
+  const userDataDtls = JSON.parse(localStorage.getItem("userData"));
 
   useEffect(() => {
     document.title = screenName === "ScheduleAllocation" ? 'Schedule Allocation' : 'Standard Allocation';
@@ -1078,15 +1084,12 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
         setApproveFreeseCheck(true);
       }
       setReleaseDate(convertDateFormat(allocDetails[0].RELEASE_DATE)); //yyyy-mm-dd
-      console.log("Error chck", allocDetails)
-      console.log("Error chck1", allocDetails[0].RELEASE_DATE)
       const initialDateParts1 = (allocDetails[0].RELEASE_DATE).slice(0, 10).split('-');
       const initialDateR = new Date(
         Number("20" + initialDateParts1[2]), // Year
         Number(initialDateParts1[0]) - 1, // Month (0-based index)
         Number(initialDateParts1[1]) // Day
       );
-      console.log("Error chck2", initialDateParts1, initialDateR)
       setInitialDateRD(initialDateR);
 
       setIsLoading(false);
@@ -1094,10 +1097,12 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       setValidWorkSheetDataCheck(false);
     }
   })
-  console.log("check conver::", allocDetails.length > 0 ? (allocDetails[0].RELEASE_DATE) : [])
+  // console.log("check conver::", allocDetails.length > 0 ? (allocDetails[0].RELEASE_DATE) : [])
   useEffect(() => {
     if (typeof JSON.parse(localStorage.getItem("userData"))?.username === "undefined") {
       navigate(`/`);
+    } else {
+      setUserRole(JSON.parse(localStorage.getItem("userData"))?.role_id);
     }
   }, []);
 
@@ -1171,6 +1176,8 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       }
       if (allocDetails[0].CALC_ITEM_COUNT === 1) {
         if (allocDetails[0].STATUS_CODE === "WS") {
+          console.log(1234567890)
+          setSubCalStatus(true); //Enable Submit.
           if (convertDateFormat2(allocDetails[0].RELEASE_DATE) >= currentDate) {
             if (allocDetails[0].RECALC_IND === "N" && allocDetails[0].ALLOC_CRITERIA !== 'F') {
               setValidCalculateDataCheck(true); // Enabling the Approve Tab
@@ -1206,6 +1213,58 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
           setSizeDtlscreenTabColor(true);
           setReservescreenTabColor(true);
         }
+        //  else if (allocDetails[0].STATUS_CODE === "SUB") {
+        //   setSubCalStatus(true);
+        //   if (userRole === 3) {
+        //     setApproveFreeseCheck(true);  // Enabling the Freese for all button and textfield in all screen
+        //     setValidCalculateTabCheck(true);  // Disabling the Calculate Tab
+        //     setValidCalculateDataCheck(false); // Disabling the Approve Tab
+        //     setValidReserveDataCheck(false); // Disabling the Reserve Tab
+        //     setWhatIfSummscreenTabColor(true);
+        //     setAllocDtlscreenTabColor(true);
+        //     setSizeDtlscreenTabColor(true);
+        //     setApprovescreenTabColor(true);
+        //   } else {
+        //     setWhatIfSummscreenTabColor(false);
+        //     setAllocDtlscreenTabColor(false);
+        //     setSizeDtlscreenTabColor(false);
+        //     setValidCalculateTabCheck(false);  // Enabling the Calculate Tab
+        //   }
+        //   if (convertDateFormat2(allocDetails[0].RELEASE_DATE) >= currentDate) {
+        //     if (allocDetails[0].RECALC_IND === "N" && allocDetails[0].ALLOC_CRITERIA !== 'F') {
+        //       setValidCalculateDataCheck(true); // Enabling the Approve Tab
+        //       setValidReserveDataCheck(true); // Enabling the Reserve Tab
+        //     } else {
+        //       setValidCalculateDataCheck(false); // Disabling the Approve Tab
+        //       setValidReserveDataCheck(false); // Disabling the Reserve Tab
+        //     }
+        //   }
+        //   if (ValidWorkSheetDataCheck) { setValidWorkSheetCheck(true); } // Enabling the Back to WorkSheet Tab
+        // }
+        else if (allocDetails[0].STATUS_CODE === "SUB") {
+          setSubCalStatus(true);
+        
+          const isUserRole3 = userRole === 3;
+          const isRecalcAllowed = convertDateFormat2(allocDetails[0].RELEASE_DATE) >= currentDate &&
+                                  allocDetails[0].RECALC_IND === "N" &&
+                                  allocDetails[0].ALLOC_CRITERIA !== 'F';
+        
+          // Set tab and button states based on userRole
+          setApproveFreeseCheck(isUserRole3);
+          setValidCalculateTabCheck(isUserRole3);  // Disable Calculate Tab for role 3
+          setValidCalculateDataCheck(!isUserRole3 && isRecalcAllowed);  // Enable Approve Tab for other roles if allowed
+          setValidReserveDataCheck(!isUserRole3 && isRecalcAllowed);  // Enable Reserve Tab for other roles if allowed
+        
+          // Set screen tab colors for userRole 3
+          setWhatIfSummscreenTabColor(isUserRole3);
+          setAllocDtlscreenTabColor(isUserRole3);
+          setSizeDtlscreenTabColor(isUserRole3);
+          setApprovescreenTabColor(isUserRole3);
+        
+          // Enable Back to Worksheet Tab if ValidWorkSheetDataCheck is true
+          setValidWorkSheetCheck(!!ValidWorkSheetDataCheck);
+        }
+        
         setValidAllocDetailCheck(false); // Enabling the Alloc Details Tab
         if (allocDetails[0].ALLOC_LEVEL_CODE === "D") { setValidSizeDetailCheck(false); } // Enabling the Size Details Tab
         else if (allocDetails[0].ALLOC_LEVEL_CODE === "T") { setValidSizeDetailCheck(true); } // Disabling the Size Details Tab
@@ -1562,8 +1621,10 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
         if (CreateAllocationData?.data?.ValidRLCheckData?.message[0].CALC_ITEM_COUNT === 1) { setCalculatescreenTabColor(false); setQLscreenTabColor(false);/* Tab color changing to green for Calculation screen */ }
         else if (CreateAllocationData?.data?.ValidRLCheckData?.message[0].CALC_ITEM_COUNT === 0) { setCalculatescreenTabColor(true);/* Tab color changing to red for Calculation screen */ }
         if (CreateAllocationData?.data?.ValidRLCheckData?.message[0].ALLOC_HEAD.length > 0) {
-          if (CreateAllocationData?.data?.ValidRLCheckData?.message[0].ALLOC_HEAD[0].STATUS === 'WS') { setValidCalculateTabCheck(false); /* Enabling Calculation Tab */ }
-          else if (CreateAllocationData?.data?.ValidRLCheckData?.message[0].ALLOC_HEAD[0].STATUS === 'SCHD') { setValidCalculateTabCheck(true); setSchedulescreenTabColor(false); /*Tab color changing to green for Schedule screen*/ }
+          const checkStatus = CreateAllocationData?.data?.ValidRLCheckData?.message[0].ALLOC_HEAD[0].STATUS;
+          if (checkStatus === 'WS') { setValidCalculateTabCheck(false); /* Enabling Calculation Tab */ }
+          else if (checkStatus === 'SUB' && callMode === "EDIT" && (userRole === 1 || userRole === 2)) { setValidCalculateTabCheck(false); }
+          else if (checkStatus === 'SCHD') { setValidCalculateTabCheck(true); setSchedulescreenTabColor(false); /*Tab color changing to green for Schedule screen*/ }
           else { setValidCalculateTabCheck(true); /* Disabling Calculation Tab */ }
           if (CreateAllocationData?.data?.ValidRLCheckData?.message[0].ALLOC_HEAD[0].RECALC_IND === 'Y') { setCalculatescreenTabColor(true);/* Tab color changing to red for Calculation screen */ }
         }
@@ -1649,7 +1710,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       }
       CreateAllocationData.data.switchTab.status = 0
       setLoading(false);
-    }  else if (
+    } else if (
       CreateAllocationData?.data?.allocDetails
       && Array.isArray(CreateAllocationData?.data?.allocDetails)
     ) {
@@ -1964,7 +2025,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       setAllPageSelected([]);
       setPage(0)
       setIsLoading(false);
-	  CreateAllocationData.data.totalData.status = 0;
+      CreateAllocationData.data.totalData.status = 0;
     }
   }, [CreateAllocationData])
 
@@ -2481,7 +2542,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
   //console.log(searchHeaderData)
   const convert_Date_picker = (val) => {
     //'' yyyy-mm-dd
-    console.log("convert_Date_picker::", val, searchDataCCommon.EISD_START_DATE);
+    // console.log("convert_Date_picker::", val, searchDataCCommon.EISD_START_DATE);
     if (val.length > 0) {
       const initialDateParts1 = val.slice(0, 10).split('-');
       const initialDateR = new Date(
@@ -2525,7 +2586,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
 
   const handleDatePicker = (name, date) => {
     if (date === null || date === "") {
-      console.log("handleDatePicker : ", name, date)
+      // console.log("handleDatePicker : ", name, date)
       if (name === "RELEASE_DATE") {
         setReleaseDate("")
         setInitialDateRD("");
@@ -2553,7 +2614,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
     const day = String(Cdate.getDate()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
 
-    console.log("handleDatePicker 1: ", name, date)
+    // console.log("handleDatePicker 1: ", name, date)
     switch (name) {
 
       case "RELEASE_DATE":
@@ -2703,7 +2764,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
   const RefreshGrid = () => {
     setApproveFreeseCheck(false);
     setAvailCheck(false);
-
+    setSubCalStatus(false); // STATUS SUB
     setIsValidCTEDF(false);
     setIsValidCTNDF(false);
     setIsValidCTEDT(false);
@@ -3116,11 +3177,12 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
     //     };
     //   });
     // }
+    console.log("submit :: ", allPageSelected.length > 0 && subCalcStatus, subCalcStatus, subWkStatus, ValidCalculateDataCheck)
     if (val.CODE === searchHeaderData.STATUS) {
       return;
     }
     if (val.CODE === "APV") {
-      if (ValidCalculateDataCheck) {
+      if (ValidCalculateDataCheck && subWkStatus) {
         APPROVE_func();
       } else {
         setOpenDialog(true);
@@ -3158,10 +3220,55 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       }
     }
     if (val.CODE === "WS") {
+      if (searchHeaderData.STATUS === 'SUB') {
+        if (subCalcStatus && subWkStatus) {
+          swal({
+            text: 'Updating Allocation to worksheet status. Do you want to continue?',
+            icon: 'warning',
+
+            buttons: {
+
+              confirm: {
+                text: 'Yes',
+                value: true,
+                className: CreateASwal.button,
+                visible: true,
+                closeModal: true,
+              }, cancel: {
+                text: 'No',
+                value: false,
+                className: CreateASwal.cancelButton,
+                visible: true,
+                closeModal: true,
+              },
+            },
+            closeOnClickOutside: false,
+            customClass: {
+              icon: CreateASwal.customIcon,
+            },
+          }).then((ok) => {
+            // Handle the user's choice
+            if (ok) {
+              setCallWksht(false);
+              setIsLoading(true);
+              dispatch(postUPDSTATUSRequest([{
+                ALLOC_NO: searchHeaderData.ALLOC_NO,
+                STATUS: val.CODE
+              }]));
+            }
+          });
+        } else {
+          setOpenDialog(true);
+          setDialogData("Please close the allocation and open the allocation from Allocation Summary screen");
+        }
+
+
+        return;
+      }
       if (ValidWorkSheetCheck) {
         Worksheet_func();
       }
-      else if (allocDetailsData.length > 0 && (allocDetailsData[0].STATUS_CODE === "RSV" || allocDetailsData[0].STATUS_CODE === "APV")) {
+      else if (allocDetailsData.length > 0 && (allocDetailsData[0].STATUS_CODE === "RSV" || allocDetailsData[0].STATUS_CODE === "APV" || allocDetailsData[0].STATUS_CODE === "SUB")) {
         statusData.map((option) => {
           ////console.log("statusCreateDataCheck: 3");
           if (option.CODE === allocDetailsData[0].STATUS_CODE) { setSearchHeaderData((prev) => { return { ...prev, STATUS: option.CODE, STATUS_CODE: option.STATUS }; }) }
@@ -3173,7 +3280,50 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
           if (option.CODE === "WS") { setSearchHeaderData((prev) => { return { ...prev, STATUS: option.CODE, STATUS_CODE: option.STATUS }; }) }
         })
       }
+    } else if (val.CODE === "SUB") {
+      if (allPageSelected.length > 0 && subCalcStatus && ValidCalculateDataCheck) {
+        swal({
+          text: 'Updating Allocation to Submitted status. Do you want to continue?',
+          icon: 'warning',
+
+          buttons: {
+
+            confirm: {
+              text: 'Yes',
+              value: true,
+              className: CreateASwal.button,
+              visible: true,
+              closeModal: true,
+            }, cancel: {
+              text: 'No',
+              value: false,
+              className: CreateASwal.cancelButton,
+              visible: true,
+              closeModal: true,
+            },
+          },
+          closeOnClickOutside: false,
+          customClass: {
+            icon: CreateASwal.customIcon,
+          },
+        }).then((ok) => {
+          // Handle the user's choice
+          if (ok) {
+            console.log("AKKI ", allocDetails)
+            setIsLoading(true);
+            dispatch(postUPDSTATUSRequest([{
+              ALLOC_NO: searchHeaderData.ALLOC_NO,
+              STATUS: val.CODE
+            }]));
+          }
+        });
+      } else {
+        setOpenDialog(true);
+        setDialogData("Allocation is not ready to Submit.");
+      }
+
     }
+
   }
 
   ///////////////////////////////////////////
@@ -7012,7 +7162,8 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       </div> */}
     </Box>
   )
-  console.log("SEARCHHEADERDATA: (8623)", searchHeaderData, totalData, ApproveFreeseCheck, "Date :: ", new Date())
+  console.log("SEARCHHEADERDATA: (8623)", searchHeaderData, totalData, ApproveFreeseCheck, "Date :: ", new Date(),
+    (userRole !== 1 && userRole !== 2) && (String(searchHeaderData.STATUS) === "APV" || String(searchHeaderData.STATUS) === "RSV"))
   const CreatescreenButtons = () => (
     <Box
       display="flex"
@@ -7170,7 +7321,8 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
                 Calc_func();
               }
             }}
-            disabled={callMode === "VIEW" ? true : tab !== "1" ? true : (allPageSelected.length === 0 ? true : (searchHeaderData.ALLOC_TYPE === "S" ? true : ValidCalculateTabCheck))}
+            disabled={callMode === "VIEW" ? true : tab !== "1" ? true : (allPageSelected.length === 0 ? true :
+              (searchHeaderData.ALLOC_TYPE === "S" ? true : ValidCalculateTabCheck)) || ((userRole !== 1 && userRole !== 2) && searchHeaderData.STATUS === 'SUB')}
             startIcon={<WebhookIcon />}
           >Calculate</Button>
         </div>
@@ -7338,7 +7490,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
     setInitialDateRD(initialDateR);
     setReleaseDate(convertDateFormat(new Date().toISOString().slice(0, 10)))
   };
-
+  console.log("ROLE TEST", statusData)
   const SearchHeader = () => (
     <Box
       // component="fieldset"
@@ -7669,7 +7821,12 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
                 classNamePrefix="mySelect"
                 getOptionLabel={option => `${option.STATUS.toString()}`}
                 getOptionValue={option => option.STATUS}
-                options={statusData.filter(option => option.CODE === 'APV' || option.CODE === 'WS' || option.CODE === 'RSV')}
+                options={statusData.filter(option => //option.CODE === 'APV' || option.CODE === 'WS' || option.CODE === 'RSV'
+                  option.CODE === 'WS' ||
+                  (userRole === 1 || userRole === 2
+                    ? callMode === "EDIT" && searchHeaderData.STATUS === 'SUB' ? (option.CODE === 'APV' || option.CODE === 'RSV' || option.CODE === 'SUB') : (option.CODE === 'APV' || option.CODE === 'RSV')
+                    : option.CODE === 'SUB')
+                )}
                 isSearchable={true}
                 onChange={selectSTATUS}
                 maxMenuHeight={180}
@@ -7678,15 +7835,21 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
                 value={statusData.filter(obj => searchHeaderData?.STATUS === obj.CODE)}
                 closeMenuOnSelect={true}
                 isDisabled={!searchHeaderData.ALLOC_NO || (String(searchHeaderData.ALLOC_CRITERIA) === "Pre Buy" ? true : (String(searchHeaderData.STATUS).length === 0 ? true :
-                  !["WS", "APV", "RSV"].includes(searchHeaderData.STATUS) ? true :
+                  !["WS", "APV", "RSV", "SUB"].includes(searchHeaderData.STATUS) ? true :
                     ApproveFreeseCheck ? (typeof callMode === "undefined" ? String(searchHeaderData.STATUS) === "APV" : (callMode === "VIEW" ? true :
-                      ValidWorkSheetCheck ? false : String(searchHeaderData.STATUS) === "APV")) : false))}
+                      ValidWorkSheetCheck ? false : String(searchHeaderData.STATUS) === "APV")) : false))
+                  || (userRole !== 1 && userRole !== 2) && (String(searchHeaderData.STATUS) === "APV" || String(searchHeaderData.STATUS) === "RSV")
+
+                }
                 // isOptionDisabled={option => (String(searchHeaderData.STATUS) === "APV" ? option.CODE === "RSV" : false)
                 //   || String(searchHeaderData.STATUS) === option.CODE}
                 isOptionDisabled={option => String(searchHeaderData.STATUS) === option.CODE || (typeof callMode === "undefined" ?
                   (String(searchHeaderData.STATUS) === "APV" ? (option.CODE === "WS" || option.CODE === "RSV") : String(searchHeaderData.STATUS) === "RSV" ? option.CODE === "WS" : false) :
                   (String(searchHeaderData.STATUS) === "APV" && CreateStatusButtonChange ? (option.CODE === "WS" || option.CODE === "RSV") :
-                    String(searchHeaderData.STATUS) === "RSV" && CreateStatusButtonChange ? option.CODE === "WS" : String(searchHeaderData.STATUS) === "APV" ? option.CODE === "RSV" : false) || String(searchHeaderData.STATUS) === option.CODE)}
+                    String(searchHeaderData.STATUS) === "RSV" && CreateStatusButtonChange ?
+                      option.CODE === "WS" : String(searchHeaderData.STATUS) === "APV" ? option.CODE === "RSV" : false) || String(searchHeaderData.STATUS) === option.CODE)
+                  || (userRole === 1 || userRole === 2) && String(searchHeaderData.STATUS) === "SUB" ? false : (userRole !== 1 || userRole !== 2) ? false : option.CODE === "SUB"
+                }
               />
 
             </div>
@@ -9061,6 +9224,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       setCalculateFunctionCall(false);
       dispatch(postCREATEGRIDDFRequest([allocNoData])); // asy akhil
       if (CreateAllocationData?.data?.calcRes?.status === 201) {
+        setSubCalStatus(true);
         setIsValidQtyLimits(true);
         dispatch(postAPPROVEVALIDFUNCTIONRequest([allocNoData]));// asy akhil
         setCalcCheck(true); //????
@@ -9069,6 +9233,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
         setValidAllocDetailCheck(false); // For Enabling the Alloc details Tab
         setValidWhatIfSummCheck(false); // For Enabling the What If Summary details Tab
       } else if (CreateAllocationData?.data?.calcRes?.status === 500) {
+        setSubCalStatus(false);
         setCalcCheck(false);//????
         setValidSizeDetailCheck(true); // For Disabling the Size details Tab
         setValidAllocDetailCheck(true); // For Disabling the Alloc details Tab
@@ -9077,7 +9242,6 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       CreateAllocationData.data.calcRes.status = 0
     }
   }, [CreateAllocationData?.data?.calcRes]);
-
   const Calc_func = () => {
     setIsLoading(true);
     setCalculateFunctionCall(true);
@@ -9103,6 +9267,62 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
       event.preventDefault();
     }
   }
+  /*
+                    #########################################
+                    ########### SUBMITTED STATUS ############
+                    #########################################
+      */
+
+  useEffect(() => {
+    if (CreateAllocationData?.data?.updStatus?.status) {
+      setIsLoading(false);
+      setOpenDialog(true);
+      setDialogData(String(CreateAllocationData?.data?.updStatus?.message));
+      if (CreateAllocationData?.data?.updStatus?.status === 200) {
+        if (searchHeaderData.STATUS === 'WS') {
+          setSubWkStatus(false);
+          setApproveFreeseCheck(true); // Enabling the Freese of all buttons.
+          setWhatIfSummscreenTabColor(true);
+          setAllocDtlscreenTabColor(true);
+          setSizeDtlscreenTabColor(true);
+          setApprovescreenTabColor(true);
+          setCreateStatusButtonChange(true);
+          setValidCalculateTabCheck(true);  // Disabling the Calculation Tab
+          // setCalculatescreenTabColor(true); // Tab color red for Calculation 
+          setValidWorkSheetCheck(false); // Disabling the Back to Worksheet Tab
+          setValidWorkSheetApproveCheck(true);  // Enabling the Back to Worksheet Tab while Approve in Alloc summary
+          // setWorksheetCheck(true);  //??????
+
+          setWorksheetscreenTabColor(true);
+          setValidWorkSheetDataCheck(true);
+
+          // setCalculatescreenTabColor(false); // Tab color green for Calculation
+        } else {
+          setValidCalculateTabCheck(true);  // Enabling the Calculation Tab
+          // setCalculatescreenTabColor(true); // Tab color red for Calculation 
+          setValidWorkSheetCheck(false); // Disabling the Back to Worksheet Tab
+          setValidWorkSheetApproveCheck(true);  // Enabling the Back to Worksheet Tab while Approve in Alloc summary
+          // setWorksheetCheck(true);  //??????
+          setWhatIfSummscreenTabColor(false);
+          setAllocDtlscreenTabColor(false);
+          setSizeDtlscreenTabColor(false);
+          setWorksheetscreenTabColor(true);
+          setValidWorkSheetDataCheck(true);
+          setCreateStatusButtonChange(false);
+          setApproveFreeseCheck(false); // Disabling the Freese of all buttons.
+        }
+        setSubCalStatus(false);
+
+        dispatch(getALLOCHEADDETAILSRequest([allocNoData])); //Asy alloccall
+        setAllocDetails([]);
+        CreateAllocationData.data.updStatus.status = 0;
+
+      }
+
+    }
+
+  }, [CreateAllocationData?.data?.updStatus]);
+  console.log("setSubCalStatus::: ", subCalcStatus, subWkStatus)
   /*
                   #########################################
                   ############ APPROVE POP-UP  ############
@@ -9138,6 +9358,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
         setValidReserveDataCheck(false); // Disabling the Reserve Tab
         setValidCalculateTabCheck(true);  // Disabling the Calculation Tab
         setValidWorkSheetCheck(false); // Disabling the Back to Worksheet Tab
+        setSubWkStatus(false)
         setValidWorkSheetDataCheck(true);
         setValidWorkSheetApproveCheck(true);  // Disabling the Back to Worksheet Tab while Approve in Alloc summary
         setApproveFreeseCheck(true); // Enabling the Freese of all buttons.
@@ -9396,7 +9617,7 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
         setDialogData(String(CreateAllocationData?.data?.errRptData?.message));
       }
       CreateAllocationData.data.errRptData.status = 0
-    }else if (CreateAllocationData?.data?.errRptData?.status === 200) {
+    } else if (CreateAllocationData?.data?.errRptData?.status === 200) {
       // const uniErrData =
       //   CreateAllocationData?.data?.errRptData.length > 0
       //     ? [...new Map(CreateAllocationData?.data?.errRptData.map((item) => [item["SOURCE_ITEM"], item])).values()]
@@ -12138,29 +12359,30 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
                                                   paddingRight: "0px",
                                                 }}
                                               >
-                                                {/* {row.REF_2} */}
+                                                {/* {row.REF_2}  searchHeaderData.ALLOC_CRITERIA*/}
                                                 {(() => {
                                                   const formatDate = (str, type) => {
                                                     if (!str.includes('/')) return str;
-                                              
+
                                                     const slashIndex = type === "Purchase Order" ? str.lastIndexOf('/') : str.indexOf('/');
-                                                    const [year, month, day] = (type === "Purchase Order" 
-                                                      ? str.substring(slashIndex + 1) 
+                                                    const [year, month, day] = (type === "Purchase Order"
+                                                      ? str.substring(slashIndex + 1)
                                                       : str.substring(0, slashIndex)
                                                     ).split('-');
                                                     const formattedYear = year ? year.slice(2) : 'yy';
-                                              
+
                                                     return type === "Purchase Order"
                                                       ? `${str.substring(0, slashIndex + 1)}${month}-${day}-${formattedYear}`
                                                       : `${month}-${day}-${formattedYear}${str.substring(slashIndex)}`;
                                                   };
-                                              
+
                                                   const { ALLOC_CRITERIA } = searchHeaderData;
                                                   return ALLOC_CRITERIA === "Purchase Order" || ALLOC_CRITERIA === "ASN"
                                                     ? formatDate(row.REF_2, ALLOC_CRITERIA)
                                                     : row.REF_2;
                                                 })()
                                                 }
+
                                               </InputLabel>
 
                                               <Button sx={{
@@ -12181,19 +12403,19 @@ const CreateAllocation = ({ screenName, callData, callMode, rlCheck, setCheck, s
                                                     (() => {
                                                       const formatDate = (str, type) => {
                                                         if (!str.includes('/')) return str;
-                                                  
+
                                                         const slashIndex = type === "Purchase Order" ? str.lastIndexOf('/') : str.indexOf('/');
-                                                        const [year, month, day] = (type === "Purchase Order" 
-                                                          ? str.substring(slashIndex + 1) 
+                                                        const [year, month, day] = (type === "Purchase Order"
+                                                          ? str.substring(slashIndex + 1)
                                                           : str.substring(0, slashIndex)
                                                         ).split('-');
                                                         const formattedYear = year ? year.slice(2) : 'yy';
-                                                  
+
                                                         return type === "Purchase Order"
                                                           ? `${str.substring(0, slashIndex + 1)}${month}-${day}-${formattedYear}`
                                                           : `${month}-${day}-${formattedYear}${str.substring(slashIndex)}`;
                                                       };
-                                                  
+
                                                       const { ALLOC_CRITERIA } = searchHeaderData;
                                                       return ALLOC_CRITERIA === "Purchase Order" || ALLOC_CRITERIA === "ASN"
                                                         ? formatDate(row.REF_2, ALLOC_CRITERIA)

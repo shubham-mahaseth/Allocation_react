@@ -24,6 +24,7 @@ import allocDashboardReducers from "./AllocDashboardReducers";
 import allocationBatchReducers from "./AllocationBatchReducers";
 import seedDataInsertReducers from "./SeedDataInsertReducers";
 import ReportsReducers from "./ReportsReducers";
+import UserConfigReducers from "./UserConfigDetailsReducers";
 
 const rootReducer = combineReducers({
   StagingProcessingReducers,
@@ -51,6 +52,7 @@ const rootReducer = combineReducers({
   allocationBatchReducers,
   seedDataInsertReducers,
   ReportsReducers,
+  UserConfigReducers,
 });
 
 export default rootReducer;
