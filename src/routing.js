@@ -32,7 +32,7 @@ function Routing() {
       <Route path="/" element={<SignIn />} />
       <Route element={<AdminLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/stage-processing" element={<StageProcessing />} />
+        {/* <Route path="/stage-processing" element={<StageProcessing />} />
         <Route path="/download" element={<Download />} />
         <Route path="/error-processing" element={<ErrorProcessing />} />
         <Route path="/system-config-maintenance" element={<SystemConfig />} />
@@ -47,7 +47,7 @@ function Routing() {
         <Route path="/Finance-Interface" element={<FinanceInterface />} />
         <Route path="/Stock-Ledger-View" element={<DailyView />} />
         <Route path="/sub_Ledger_Cost" element={<SubLedgerCost />} />
-        <Route path="/system-config-creation" element={<SystemConfigCreation />} />
+        <Route path="/system-config-creation" element={<SystemConfigCreation />} /> */}
         <Route path="/CreateAllocation" element={<CreateAllocation screenName={"CreateAllocation"} />} />
         <Route path="/ScheduleAllocation" element={<CreateAllocation screenName={"ScheduleAllocation"} />} />
         <Route path="/AllocSummary" element={<AllocSummary  />} />

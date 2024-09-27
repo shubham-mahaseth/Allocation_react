@@ -35,9 +35,9 @@ const UserProfile = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    navigate("/");
+  const handleLogout = () => {    
     localStorage.clear();
+    navigate(`/`);
   };
 
   const classes = useStyles();

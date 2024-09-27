@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,10 +14,15 @@ import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { useNavigate } from "react-router";
-import { UsersList } from "../../Constants/login";
 import proxima360 from "../../Assets/icons/proxima360.png";
 import { LocalLaundryService } from "@mui/icons-material";
 import { makeStyles } from "@mui/styles";
+import CryptoJS from 'crypto-js';
+import { useDispatch, useSelector } from "react-redux";
+import { postUSRAUTHRequest } from '../../Redux/Action/UserConfigDetails';
+import { Modal } from '@material-ui/core';
+import CircularProgress from "@mui/material/CircularProgress";
+import User_Signup from './UsrRegist'
 
 const useStyles = makeStyles({
   Copyrightdiv: {
@@ -58,27 +63,80 @@ function Copyright(props) {
 
 const theme = createTheme();
 
+
+const secretKey = CryptoJS.enc.Utf8.parse("Allocation_Encrpytion_Proxima360");  // Keep this safe and use the same key in Django
+
 export default function SignIn() {
   const [userData, setUserData] = useState({
     username: "",
     password: "",
   });
   const [isError, setIsError] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [usrRegPStatus, setUsrRegPStatus] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const UsersData = useSelector(
+    (state) => state.UserConfigReducers
+  );
+
+  useEffect(() => {
+    const usrDtls = UsersData?.data?.usrAuthn;
+    if (Array.isArray(usrDtls) && usrDtls.length > 0) {
+      if (usrDtls[0].AUTH) {
+        //localStorage.setItem("userData", JSON.stringify({ username: userData.username, }));
+        if ((usrDtls[0].INFO).length > 0) {
+          const user_details = (usrDtls[0].INFO)[0];
+          let userData = localStorage.getItem("userData");
+          if (userData) {
+            userData = JSON.parse(userData);
+          } else {
+            userData = {};
+          }
+          userData.role_id = user_details.role_id;
+          userData.role_name = user_details.role_name;
+          localStorage.setItem("userData", JSON.stringify(userData));
+        }
+        setUserData({
+          username: "",
+          password: "",
+        });
+        navigate("/AllocDashboard");
+      } else if (!(usrDtls[0].AUTH)) {
+        setIsError(true);
+        localStorage.clear();
+      }
+      UsersData.data.usrAuthn[0].AUTH = 0;
+      setIsLoading(false);
+    }
+  }, [UsersData?.data]);
+
+  const encryptPassword = (plainText) => {
+    const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
+      mode: CryptoJS.mode.ECB, // Use ECB mode for consistency
+      padding: CryptoJS.pad.Pkcs7, // Default padding (PKCS7)
+    });
+    return encrypted.toString();  // Output is base64 encoded
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const currentUser = UsersList.find(
-      (val) =>
-        val.username === userData.username && val.password === userData.password
-    );
-    if (currentUser) {
-      localStorage.setItem("userData", JSON.stringify(currentUser));
-      navigate("/AllocDashboard");
+    const encryptedPassword = encryptPassword(userData.password);
+
+    if (userData.username.length > 0 && userData.password.length > 0) {
+      const currentUser = [{
+        "USERNAME": userData.username,
+        "PASSWORD": encryptedPassword
+      }];
+      setIsLoading(true);
+      dispatch(postUSRAUTHRequest(currentUser));
+
+      localStorage.setItem("userData", JSON.stringify({ username: userData.username, }));
+      // navigate("/AllocDashboard");
     } else {
       setIsError(true);
     }
-    window.location.reload();
+    // window.location.reload();
   };
 
   const handleChange = (e) => {
@@ -97,7 +155,9 @@ export default function SignIn() {
 
     setIsError(false);
   };
-
+  const handleSignUpClick = () => {
+    setUsrRegPStatus(true);
+  }
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -159,7 +219,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="#" variant="body2" onClick={handleSignUpClick}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
@@ -176,6 +236,26 @@ export default function SignIn() {
           </Alert>
         </Snackbar>
       </Stack>
+      <Modal open={isLoading}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          <CircularProgress color="secondary" />
+        </div>
+      </Modal>
+      {
+        usrRegPStatus ?
+          <div>
+            < User_Signup />
+          </div>
+          : null
+      }
     </ThemeProvider>
   );
 }

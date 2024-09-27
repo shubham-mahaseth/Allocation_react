@@ -61,7 +61,7 @@ import {
 
 } from "./SeedDataInsertSaga";
 import {  RPTData,} from "./ReportsSaga";
-import { RtvUsrDtls,RtvUsrsData } from "./UserConfigDetailsSaga";
+import { RtvUsrDtls,RtvUsrsData,ValUSRAUTH } from "./UserConfigDetailsSaga";
 
 export function* rootSaga() {
   yield all([
@@ -239,5 +239,7 @@ export function* rootSaga() {
     fork(RtvUsrsData),
     /* SUBMITTED ALLOC STATUS */
     fork(PostAllocStatus),
+    /* USER VALIDATION */
+    fork(ValUSRAUTH),
   ]);
 }

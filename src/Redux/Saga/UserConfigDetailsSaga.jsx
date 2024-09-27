@@ -1,7 +1,8 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import {
   postUSRDTLSSuccess, postUSRDTLSError,
-  postUSRSDATASuccess, postUSRSDATAError
+  postUSRSDATASuccess, postUSRSDATAError,
+  postUSRAUTHSuccess, postUSRAUTHError
 } from "../Action/UserConfigDetails";
 import * as actions from "../constant";
 import axiosCall from "../../services/index";
@@ -40,4 +41,21 @@ function* fetchUsersData(action) {
 
 export function* RtvUsrsData() {
   yield takeLatest(actions.POST_USRSDATA_REQUEST, fetchUsersData);
+}
+
+function* validateUsersAuth(action) {
+  try {
+    const response = yield call(axiosCall, "POST", API.AUTHUSER, action.payload);
+    if (response?.status == 200) {
+      yield put(postUSRAUTHSuccess({ usrAuthn: response?.data }));
+    } else {
+      yield put(postUSRAUTHError(response?.data?.message));
+    }
+  } catch (e) {
+    yield put(postUSRAUTHError(e.message));
+  }
+}
+
+export function* ValUSRAUTH() {
+  yield takeLatest(actions.POST_USRAUTH_REQUEST, validateUsersAuth);
 }

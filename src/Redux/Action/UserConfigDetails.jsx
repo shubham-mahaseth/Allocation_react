@@ -21,3 +21,14 @@ export const postUSRSDATASuccess = createAction(
 export const postUSRSDATAError = createAction(
   actions.POST_USRSDATA_ERROR
 );
+
+/* USER AUTHENTICATION */
+export const postUSRAUTHRequest = createAction(
+  actions.POST_USRAUTH_REQUEST
+);
+export const postUSRAUTHSuccess = createAction(
+  actions.POST_USRAUTH_SUCCESS
+);
+export const postUSRAUTHError = createAction(
+  actions.POST_USRAUTH_ERROR
+);

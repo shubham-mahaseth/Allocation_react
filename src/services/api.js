@@ -205,4 +205,7 @@ export const API = {
     USRDTLS: '/currrole/',
     USRSDATA : '/userList/',
     UPDSTATUS : '/updStatus/',
+    /* USER AUTHENTICATION */
+    AUTHUSER: '/logAuth/',
+    
   };

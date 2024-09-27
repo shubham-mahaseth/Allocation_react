@@ -142,29 +142,20 @@ export default function Index() {
   const [fltrItems, setFltrItems] = useState([]);
   const currentUser = JSON.parse(localStorage.getItem("userData"))?.username;
   const currentRole = JSON.parse(localStorage.getItem("userData"))?.role_id;
+
   useEffect(() => {
-    if(currentUser.length > 0 && (currentRole !=1 && currentRole !=2 )){
-      const data = items?.list?.filter(row => row.id !== 10); 
-      setFltrItems({ list: data });
-      console.log("menu list :: ",data,currentRole)
-    }else{
-      setFltrItems(items)
+    if (typeof currentUser === 'undefined') {
+      navigate(`/`);
+    } else {
+      if (currentUser.length > 0 && (currentRole != 1 && currentRole != 2)) {
+        const data = items?.list?.filter(row => row.id !== 10);
+        setFltrItems({ list: data });
+        console.log("menu list :: ", data, currentRole)
+      } else {
+        setFltrItems(items)
+      }
     }
-    // if (!["admin", "Tarun", "Akhil"].includes(currentUser)) {
-    //   const data = items?.list?.filter(row => row.id !== 13); 
-    //   setFltrItems({ list: data });
-    // } else {
-    //   setFltrItems(items);
-    // }
-    // if (currentUser === RolesList[0].USER && RolesList[0].USER_ROLE === 'CARRIER') {
-    //   const data = items?.list?.filter(row => row.id === 11)
-    //   data.forEach(item => {
-    //     if (item.id === 11 && item.subitems) {
-    //       item.subitems = item.subitems.filter(subitem => subitem.id !== 2 && subitem.id !== 3);
-    //     }
-    //   });
-    //   setFltrItems({ list: data });
-    // }
+
   }, [currentUser]);
 
   const handleDrawerOpen = () => {
@@ -253,14 +244,14 @@ export default function Index() {
     if (routeName == "Upload") {
       navigate(`/upload`);
     }
-    if(routeName =="Sample Report"){
+    if (routeName == "Sample Report") {
       navigate(`/report`)
     }
     // console.log("Route to : ", routeName)/AllocDashboard
     handleDrawerClose()
     setMenuName(routeName);
     // if (routeName === menuName) {
-      // window.location.reload();
+    // window.location.reload();
     // }
   };
 
@@ -291,7 +282,7 @@ export default function Index() {
     if (itemData?.id === 2) {
       handleDrawerOpen()
       navigate(`/AllocDashboard`);
-    }else if (itemData?.id === 10) {
+    } else if (itemData?.id === 10) {
       navigate(`/AdminLayoutPage`);
       handleDrawerClose();
     } else if (itemData?.id !== 0) {
@@ -446,7 +437,7 @@ export default function Index() {
         </Box>
         <div>
           {batchState ? <AllocationBatches menuName={menuName}
-           setBatchState ={setBatchState} 
+            setBatchState={setBatchState}
           /> : null}
         </div>
       </Box>

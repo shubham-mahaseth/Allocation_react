@@ -541,8 +541,9 @@ const ShowReport = () => {
         }}>Comments</legend> */}
 
           <Paper sx={{
+            width: isScreenBigger?"calc(95vw - 0px)": "calc(94vw - 0px)",
             margin: "0px 0px 0px 0px",// width: "fit-content",
-            padding:"0px 5px 5px 5px",borderRadius: 0, boxShadow: 0, border: "0"
+            padding:"0px 5px 5px 5px",borderRadius: 0, boxShadow: 0, border: "0",
           }}
           >
             <TableContainer style={{

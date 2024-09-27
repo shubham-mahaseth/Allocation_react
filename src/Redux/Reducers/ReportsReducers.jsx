@@ -10,7 +10,7 @@ const initialState = {
 const ReportsReducers = (state = initialState, action) => {
     switch (action.type) {
 
-        case actions.GET_REPORT_REQUEST:
+        case actions.GET_REPORT_REQUEST: 
             return {
                 ...state,
                 isLoading: true,
@@ -38,6 +38,7 @@ const ReportsReducers = (state = initialState, action) => {
                 isSuccess: false,
             };
         /* GENERATE REPORT END */
+        
         default:
             return { ...state };
     }

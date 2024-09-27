@@ -228,12 +228,12 @@ const AllocDashboard = () => {
   useEffect(() => {
     document.title = 'Dashboard';
   }, []);
-
+  const currentUser = JSON.parse(localStorage.getItem("userData"))?.username;
   useEffect(() => {
-    if (typeof JSON.parse(localStorage.getItem("userData"))?.username === "undefined") {
+    if (typeof currentUser === "undefined") {
       navigate(`/`);
     }
-  }, []);
+  }, [currentUser]);
   useEffect(() => {
     if (
       DashBoardData?.data?.DashUserAlloc
@@ -365,7 +365,6 @@ const AllocDashboard = () => {
       fontWeight: 500
     }
   };
-  console.log("DashAllocCount: ",DashAllocCount,series,options3)
 
   const handleCheckboxChange = (event) => {
     const target = event.target;

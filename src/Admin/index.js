@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
 import ReactDOM from "react-dom/client";
-import { UsersList } from "../Constants/login";
-import { RolesList } from "./roleList";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, Backdrop, Fade } from '@material-ui/core';
 import CircularProgress from "@mui/material/CircularProgress";
@@ -153,7 +150,8 @@ const AdminLayoutPage = ({ }) => {
     const [ManageHeaderCheck, setManageHeaderCheck] = useState(true);
     const [ManageHeaderData, setManageHeaderData] = useState([]);
     // const [currentPageData, setcurrentPageData] = useState(RolesList);
-    const AdminLayoutPageClasses = useStyles();
+    const AdminLayoutPageClasses = useStyles();    
+    const dispatch = useDispatch();
     const UsersData = useSelector(
         (state) => state.UserConfigReducers
     );
@@ -331,7 +329,6 @@ const AdminLayoutPage = ({ }) => {
         setDialogData("")
     }
 
-    const dispatch = useDispatch();
 
     if (ManageHeaderCheck) {
         var temp = []

@@ -9,9 +9,9 @@ function App() {
   // },[]);
   TrnType()
   return (
-    <UserProvider>
+     <UserProvider>
       <Routing />
-    </UserProvider>
+     </UserProvider>
   );
 }
 

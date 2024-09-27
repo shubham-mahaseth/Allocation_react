@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const currentUser = getCurrentUser();
         if (load && currentUser.length > 0) {
-            console.log("UserProvider call : ", currentUser)
+            // console.log("UserProvider call : ", currentUser)
             dispatch(postUSRDTLSRequest([{ "USER": currentUser }]));
             setLoad(false);
         }
@@ -43,7 +43,7 @@ export const UserProvider = ({ children }) => {
             userData.role_name = user_details.role_name;
             localStorage.setItem("userData", JSON.stringify(userData));
         } else if (UserDtlsData?.data?.usrDtls?.status === 500) {
-            setUserDetails({});
+            setUserDetails({});            
         }
     }, [UserDtlsData?.data]);
     // console.log("UserProvider", UserDtlsData?.data?.usrDtls, userDetails,localStorage);
