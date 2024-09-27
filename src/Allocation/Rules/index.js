@@ -1082,7 +1082,7 @@ const RulesAndLocation = ({ allocNoData, tab, setTab, setIsValidQtyLimits, setRT
     if (locTemplateName !== "") {
       const temp = locTemplateNameData.filter(item => locTemplateName === item.TEMPLATE_NAME)
       const Ex_Loc = searchData.EXCLUDE_LOCATION;
-      dispatch(postFETCHRLLOCTEMPLATERequest([{ ...temp[0], ...{ "ALLOC_NO": allocNoData.ALLOC_NO, "LOCATION_DATA": totalData,"EXCLUDE_LOCATION":Ex_Loc } }]));
+      dispatch(postFETCHRLLOCTEMPLATERequest([{ ...temp[0], ...{ "ALLOC_NO": allocNoData.ALLOC_NO, "LOCATION_DATA": totalData, "EXCLUDE_LOCATION": Ex_Loc } }]));
       setLoadCheck(true);
     }
   }
@@ -3575,7 +3575,7 @@ const RulesAndLocation = ({ allocNoData, tab, setTab, setIsValidQtyLimits, setRT
         setLeftContData(prev => ({ ...prev, ON_ORDER_COMMIT_DATE: "" }));
       }
     };
-  
+
     if (dateSetters[label]) {
       dateSetters[label]();
     }
@@ -4275,7 +4275,7 @@ const RulesAndLocation = ({ allocNoData, tab, setTab, setIsValidQtyLimits, setRT
     }
 
     if (String(AllocRuleData["RULE_TYPE"]).length > 0) {
-      const temp = ruleType.filter(item => item.CODE === String(AllocRuleData["RULE_TYPE"]))
+      const temp = ruleType.filter(item => item.CODE === String(AllocRuleData["RULE_TYPE"]));
       if (temp.length > 0) {
         setLeftContData((prev) => { return { ...prev, RULE_TYPE: temp[0].CODE, RULE_TYPE_VAL: temp[0].CODE_DESC, }; })
       }
@@ -4323,7 +4323,18 @@ const RulesAndLocation = ({ allocNoData, tab, setTab, setIsValidQtyLimits, setRT
         setLeftContData((prev) => { return { ...prev, TEMPLATE_NO: temp[0].TEMPLATE_NO }; })
       }
     }
+    if (String(AllocRuleData["RULE_TYPE"]) === "M") {
+      setLeftContData((prev) => {
+        return {
+          ...prev,
+          EXACT_IND_VAL: '',
+          EXACT_IND: '',
+          RULE_LEVEL: '',
+          RULE_LEVEL_VAL: ''
+        };
+      })
 
+    }
     setRetrieveDataCheck(false)
     setAllRetreieveRLdataCheck(false)
   }
@@ -4387,7 +4398,7 @@ const RulesAndLocation = ({ allocNoData, tab, setTab, setIsValidQtyLimits, setRT
     </IconButton>,
     <IconButton sx={{ padding: "0px 0px 0px 5px", margin: "0px" }} disabled={ApproveFreeseCheck}>
       <BsFillEraserFill fontSize="small" onClick={eraseValReleaseDate} disabled={ApproveFreeseCheck} />
-     
+
     </IconButton>])
 
   const testChange = (e) => {
