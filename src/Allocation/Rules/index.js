@@ -5727,6 +5727,7 @@ const RulesAndLocation = ({ allocNoData, tab, setTab, setIsValidQtyLimits, setRT
                       <DatePicker
                         autoComplete="off"
                         placeholderText="MM-DD-YY"
+                        minDate={LockCheck?new Date():null}
                         selected={convert_Date_picker(LockCheck ?
                           Object.keys(copyValue).length > 0 && Object.keys(copyValue).includes("RELEASE_DATE") > 0 ? copyValue.RELEASE_DATE : "" :
                           Object.keys(inputValue1).length > 0 && Object.keys(inputValue1).includes("RELEASE_DATE") > 0 ? inputValue1.RELEASE_DATE : "")}
@@ -6064,6 +6065,7 @@ const RulesAndLocation = ({ allocNoData, tab, setTab, setIsValidQtyLimits, setRT
                                 autoComplete="off"
                                 placeholderText="MM-DD-YY"
                                 selected={convert_Date_picker(row.RELEASE_DATE)}
+                                minDate={new Date()}
                                 // maxDate={convert_Date_picker(leftContData.END_DATE1)}
                                 onChange={(date) => onTableCellDateChange("RELEASE_DATE", date, row.LOC)}
                                 onChangeRaw={(event) => {
