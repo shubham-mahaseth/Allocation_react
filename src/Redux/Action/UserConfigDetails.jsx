@@ -22,7 +22,7 @@ export const postUSRSDATAError = createAction(
   actions.POST_USRSDATA_ERROR
 );
 
-/* USER AUTHENTICATION */
+/* USER AUTHENTICATION  & REGISTRATION */
 export const postUSRAUTHRequest = createAction(
   actions.POST_USRAUTH_REQUEST
 );
@@ -31,4 +31,14 @@ export const postUSRAUTHSuccess = createAction(
 );
 export const postUSRAUTHError = createAction(
   actions.POST_USRAUTH_ERROR
+);
+
+export const postUSERREGTRequest = createAction(
+  actions.POST_USERREGT_REQUEST
+);
+export const postUSERREGTSuccess = createAction(
+  actions.POST_USERREGT_SUCCESS
+);
+export const postUSERREGTError = createAction(
+  actions.POST_USERREGT_ERROR
 );

@@ -2,7 +2,8 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import {
   postUSRDTLSSuccess, postUSRDTLSError,
   postUSRSDATASuccess, postUSRSDATAError,
-  postUSRAUTHSuccess, postUSRAUTHError
+  postUSRAUTHSuccess, postUSRAUTHError,
+  postUSERREGTSuccess, postUSERREGTError,
 } from "../Action/UserConfigDetails";
 import * as actions from "../constant";
 import axiosCall from "../../services/index";
@@ -58,4 +59,22 @@ function* validateUsersAuth(action) {
 
 export function* ValUSRAUTH() {
   yield takeLatest(actions.POST_USRAUTH_REQUEST, validateUsersAuth);
+}
+/* USER REGISTRATION */
+function* postUserRegtStatus(action) {
+  try {
+    const response = yield call(axiosCall, "POST", API.USERREGT, action.payload);
+    console.log("print :",action.payload)
+    if (response?.status == 200) {
+      yield put(postUSERREGTSuccess({ userRegtData: response?.data }));
+    } else {
+      yield put(postUSERREGTError(response?.data?.message));
+    }
+  } catch (e) {
+    yield put(postUSERREGTError(e.message));
+  }
+}
+
+export function* UserRegt_Status() {
+  yield takeLatest(actions.POST_USERREGT_REQUEST, postUserRegtStatus);
 }

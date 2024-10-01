@@ -25,11 +25,13 @@ import TemplateDownload from "./Allocation/SeedData/Template";
 import DataProcessing from "./Allocation/SeedData/Upload";
 import ShowReport from "./Allocation/Reports";
 import AdminLayoutPage from "./Admin"
+import UserSignup from "./Pages/Auth/UsrRegist";
 
 function Routing() {
   return (
     <Routes>
       <Route path="/" element={<SignIn />} />
+      <Route path="/signup" element={<UserSignup />} />
       <Route element={<AdminLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         {/* <Route path="/stage-processing" element={<StageProcessing />} />

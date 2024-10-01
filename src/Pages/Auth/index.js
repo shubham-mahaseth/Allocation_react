@@ -17,12 +17,19 @@ import { useNavigate } from "react-router";
 import proxima360 from "../../Assets/icons/proxima360.png";
 import { LocalLaundryService } from "@mui/icons-material";
 import { makeStyles } from "@mui/styles";
-import CryptoJS from 'crypto-js';
+// import CryptoJS from 'crypto-js';
 import { useDispatch, useSelector } from "react-redux";
 import { postUSRAUTHRequest } from '../../Redux/Action/UserConfigDetails';
 import { Modal } from '@material-ui/core';
 import CircularProgress from "@mui/material/CircularProgress";
-import User_Signup from './UsrRegist'
+import { encryptPassword } from './InforEnc'
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import Paper from '@mui/material/Paper';
+import Draggable from 'react-draggable';
 
 const useStyles = makeStyles({
   Copyrightdiv: {
@@ -41,6 +48,17 @@ const useStyles = makeStyles({
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+function PaperComponent(props) {
+  return (
+    <Draggable
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+      bounds="body"
+    >
+      <Paper {...props} />
+    </Draggable>
+  );
+}
 function Copyright(props) {
   const Authclasses = useStyles();
   return (
@@ -64,7 +82,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 
-const secretKey = CryptoJS.enc.Utf8.parse("Allocation_Encrpytion_Proxima360");  // Keep this safe and use the same key in Django
+// const secretKey = CryptoJS.enc.Utf8.parse("Allocation_Encrpytion_Proxima360");  // Keep this safe and use the same key in Django
 
 export default function SignIn() {
   const [userData, setUserData] = useState({
@@ -73,7 +91,8 @@ export default function SignIn() {
   });
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [usrRegPStatus, setUsrRegPStatus] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogData, setDialogData] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const UsersData = useSelector(
@@ -107,17 +126,21 @@ export default function SignIn() {
         localStorage.clear();
       }
       UsersData.data.usrAuthn[0].AUTH = 0;
-      setIsLoading(false);
+    } else if (usrDtls?.status === 500) {
+      setOpenDialog(true);
+      setDialogData(usrDtls.message);
+      UsersData.data.usrAuthn.status = 0;
     }
+    setIsLoading(false);
   }, [UsersData?.data]);
 
-  const encryptPassword = (plainText) => {
-    const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
-      mode: CryptoJS.mode.ECB, // Use ECB mode for consistency
-      padding: CryptoJS.pad.Pkcs7, // Default padding (PKCS7)
-    });
-    return encrypted.toString();  // Output is base64 encoded
-  };
+  // const encryptPassword = (plainText) => {
+  //   const encrypted = CryptoJS.AES.encrypt(plainText, secretKey, {
+  //     mode: CryptoJS.mode.ECB, // Use ECB mode for consistency
+  //     padding: CryptoJS.pad.Pkcs7, // Default padding (PKCS7)
+  //   });
+  //   return encrypted.toString();  // Output is base64 encoded
+  // };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -156,7 +179,13 @@ export default function SignIn() {
     setIsError(false);
   };
   const handleSignUpClick = () => {
-    setUsrRegPStatus(true);
+    navigate("/signup");
+    // setUsrRegPStatus(true);
+  }
+
+  const handleCloseDialog = (e) => {
+    setOpenDialog(false);
+    setDialogData("");
   }
   return (
     <ThemeProvider theme={theme}>
@@ -219,7 +248,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2" onClick={handleSignUpClick}>
+                <Link  variant="body2" onClick={handleSignUpClick}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
@@ -249,13 +278,27 @@ export default function SignIn() {
           <CircularProgress color="secondary" />
         </div>
       </Modal>
-      {
-        usrRegPStatus ?
-          <div>
-            < User_Signup />
-          </div>
-          : null
-      }
+      <div>
+        <Dialog
+          fullWidth={true}
+          maxWidth="xs"
+          open={openDialog}
+          PaperComponent={PaperComponent}
+          aria-labelledby="draggable-dialog-title"
+          disableBackdropClick
+        >
+          <DialogTitle sx={{ margin: "0px", padding: "15px 0px 0px 0px", }}></DialogTitle>
+          <DialogContent id="draggable-dialog-title" sx={{ fontSize: "16px", userSelect: 'text', padding: "0px 0px 0px 10px", }} >
+            {dialogData}
+          </DialogContent>
+          <DialogActions>
+            <Button sx={{ backgroundColor: "", fontSize: "12px", margin: "0px 5px 0px 0px", width: "100px", }}
+              onClick={handleCloseDialog} autoFocus variant="contained" startIcon={<DoneAllIcon />}>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </ThemeProvider>
   );
 }

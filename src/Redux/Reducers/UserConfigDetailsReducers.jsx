@@ -91,6 +91,34 @@ const UserConfigReducers = (state = initialState, action) => {
                 messgae: action.payload?.Data?.message,
                 isSuccess: false,
             };
+        case actions.POST_USERREGT_REQUEST:
+            return {
+                ...state,
+                isLoading: true,
+                isError: false,
+                messgae: "",
+                isSuccess: false,
+            };
+
+        case actions.POST_USERREGT_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                data: action.payload,
+                isError: false,
+                messgae: action.payload?.Data?.message,
+                isSuccess: false,
+            };
+
+        case actions.POST_USERREGT_ERROR:
+            return {
+                ...state,
+                isLoading: false,
+                isError: true,
+                messgae: action.payload?.Data?.message,
+                isSuccess: false,
+            };
+
         default:
             return { ...state };
     }
