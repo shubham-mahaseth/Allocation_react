@@ -100,6 +100,9 @@ export default function SignIn() {
   );
 
   useEffect(() => {
+    localStorage.clear();
+  }, []); 
+  useEffect(() => {
     const usrDtls = UsersData?.data?.usrAuthn;
     if (Array.isArray(usrDtls) && usrDtls.length > 0) {
       if (usrDtls[0].AUTH) {
@@ -126,6 +129,7 @@ export default function SignIn() {
         localStorage.clear();
       }
       UsersData.data.usrAuthn[0].AUTH = 0;
+      UsersData.data.usrAuthn = [];
     } else if (usrDtls?.status === 500) {
       setOpenDialog(true);
       setDialogData(usrDtls.message);
@@ -182,7 +186,10 @@ export default function SignIn() {
     navigate("/signup");
     // setUsrRegPStatus(true);
   }
-
+  const handlePwdRstClick = () => {
+    navigate("/signin/reset");
+    // setUsrRegPStatus(true);
+  }
   const handleCloseDialog = (e) => {
     setOpenDialog(false);
     setDialogData("");
@@ -243,12 +250,13 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link variant="body2" //onClick={handlePwdRstClick}
+                >
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link  variant="body2" onClick={handleSignUpClick}>
+                <Link variant="body2" onClick={handleSignUpClick}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

@@ -147,17 +147,16 @@ export default function Index() {
     if (typeof currentUser === 'undefined') {
       navigate(`/`);
     } else {
-      if (currentUser.length > 0 && (currentRole != 1 && currentRole != 2)) {
+      if (currentUser.length > 0 && (currentRole != 1 )) {
         const data = items?.list?.filter(row => row.id !== 10);
         setFltrItems({ list: data });
-        console.log("menu list :: ", data, currentRole)
       } else {
         setFltrItems(items)
       }
     }
 
   }, [currentUser]);
-
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };

@@ -85,7 +85,7 @@ const initUsrStatus = {
   PASSWORD: false,
   CPASSWORD: false
 }
-export default function UserSignup() {
+export default function ResetInfo() {
   const SignupStyle = useStyles();
   const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState(initUsrData);
@@ -148,7 +148,7 @@ export default function UserSignup() {
         } else if (["FNAME", "LNAME", "USERNAME"].includes(key) && !isNaN(value)) {
           newErrStatus[key] = true;
         } else if (key === "CPASSWORD") {
-          newErrStatus[key] = value.length ===0 ? true: value.length >0 && userInfo.PASSWORD.length > 0 && userInfo.PASSWORD !== value;
+          newErrStatus[key] = value.length ===0 ?true: value.length >0 && userInfo.PASSWORD.length > 0 && userInfo.PASSWORD !== value;
         } else {
           newErrStatus[key] = value === "";
         }
@@ -162,12 +162,7 @@ export default function UserSignup() {
     return anyError;
   };
 
-  const handleKeyDown = (event) => {
-    console.log("handleKeyDown",handleKeyDown);
-    if (event.key === 'Enter') {
-      handleSubmit();
-    }
-  };
+
   const handleSubmit = () => {
 
     if (!handleValidation()) {
@@ -189,10 +184,10 @@ export default function UserSignup() {
   }
   return (
     <div class="container">
-      <Box className="customBox" sx={{ minWidth: "450px", background: 'white' }} onKeyDown={handleKeyDown}>
+      <Box className="customBox" sx={{ minWidth: "450px", background: 'white' }}>
         <img className="logoImage" src={proxima360} alt="Profile" />
 
-        <Box sx={{ textAlign: 'center', mt: 2, }} >
+        <Box sx={{ textAlign: 'center', mt: 2, }}>
 
           <div className={SignupStyle.float_child}>
             <div>
@@ -426,7 +421,7 @@ export default function UserSignup() {
             variant="contained"
             sx={{ mt: 3, mb: 3, }}
             onClick={handleSubmit}
-          > Sign up
+          > Reset Password
           </Button>
 
         </Box>
